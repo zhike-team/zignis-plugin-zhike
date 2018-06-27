@@ -1,0 +1,4 @@
+{
+  "commandDir": "src/commands",
+  "extendDir": "src/extends"
+}

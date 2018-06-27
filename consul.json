@@ -1,0 +1,14 @@
+{
+  "development": {
+    "host": "dev.smartstudy.com",
+    "port": 8500
+  },
+  "test": {
+    "host": "confsrv.smartstudy.com",
+    "port": 8500
+  },
+  "production": {
+    "host": "confsrv.smartstudy.com",
+    "port": 8500
+  }
+}
