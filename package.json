@@ -4,6 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "co": "^4.6.0",
+    "lodash": "^4.17.10",
+    "redis": "^2.8.0",
+    "thunkify-wrap": "^1.0.4",
     "zhike-consul": "^1.0.12"
   },
   "peerDependencies": {
