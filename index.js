@@ -22,7 +22,10 @@ module.exports = {
     const redis = new Redis(config.redis)
     return {
       redis,
-      consul: consulCommand.handler
+      consul(keys) {
+        keys = Array.isArray(keys) ? keys : keys.split(',')
+        return consulCommand.handler({keys})
+      }
     }
   }
 }
