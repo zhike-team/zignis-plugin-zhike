@@ -84,9 +84,10 @@ module.exports = {
             })
       const modelNameUpper = modelName.replace(/( |^)[a-z]/g, L => L.toUpperCase())
 
-      sequelize.define(modelNameUpper, newTableInfo, {
+      let model = sequelize.define(modelNameUpper, newTableInfo, {
         tableName: table
       })
+      model.drop = forbiddenMethod // 以防误删表
     })
 
     return true
