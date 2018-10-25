@@ -14,6 +14,10 @@ exports.builder = function (yargs) {
 exports.handler = function (argv) {
   co(function*() {
     const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
+    if (!argv.keys) {
+      console.log(Utils.chalk.red('Please provide at least 1 key'))
+      return
+    }
 
     const keysPrefix = []
     argv.keys.map((key) => {

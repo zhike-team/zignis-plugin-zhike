@@ -11,6 +11,6 @@
     "zhike-consul": "^1.0.12"
   },
   "peerDependencies": {
-    "zignis": "^0.0.1"
+    "zignis": "^0.0.8"
   }
 }
