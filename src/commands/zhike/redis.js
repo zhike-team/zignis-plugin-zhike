@@ -1,6 +1,4 @@
 const co = require('co')
-const thunkify = require('thunkify-wrap')
-const _ = require('lodash')
 const Consul = require('zhike-consul')
 const consulConfig = require('../../../consul.json')
 const Utils = require('../../../../zignis/src/common/utils')
