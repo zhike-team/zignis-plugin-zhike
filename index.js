@@ -17,16 +17,18 @@ module.exports = {
     const data = yield consul.pull(env)
     const config = data.CFG
     const redis = new Redis(config.redis)
+    const consulObject = {
+      *get(keys) {
+        keys = Array.isArray(keys) ? keys : keys.split(',')
+        return consulCommand.handler({ keys })
+      } 
+    }
 
     return {
       zhike: {
-        loadDb: db.load,
-        db: db.get(),
+        db,
         redis,
-        consul(keys) {
-          keys = Array.isArray(keys) ? keys : keys.split(',')
-          return consulCommand.handler({ keys })
-        }
+        consul: consulObject
       }
     }
   }

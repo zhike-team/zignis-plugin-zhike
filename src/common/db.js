@@ -3,12 +3,15 @@ const consulConfig = require('../../consul.json')
 const Sequelize = require('sequelize')
 const _ = require('lodash')
 
-const instances = {}
+class DatabaseLoader {
+  constructor() {
+    this.instances = {}
+  }
 
-module.exports = {
   get() {
-    return instances
-  },
+    return this.instances
+  }
+
   *load(consulKey, instanceKey = '') {
     const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
     const keysPrefix = [consulKey.split('.')[0]]
@@ -53,13 +56,13 @@ module.exports = {
     yield sequelize.authenticate()
 
     instanceKey = instanceKey || consulKey
-    instances[instanceKey] = sequelize
+    this.instances[instanceKey] = sequelize
 
-    const interface = sequelize.getQueryInterface()
-    const tables = yield interface.showAllTables()
+    const queryInterface = sequelize.getQueryInterface()
+    const tables = yield queryInterface.showAllTables()
     const tableInfos = yield Promise.all(
       tables.map(table => {
-        return interface.describeTable(table)
+        return queryInterface.describeTable(table)
       })
     )
 
@@ -67,12 +70,14 @@ module.exports = {
     Object.keys(combinedTableInfos).forEach(table => {
       const tableInfo = combinedTableInfos[table]
       const newTableInfo = {}
+      const newTableFields = []
       Object.keys(tableInfo).map(field => {
         const newField = field.replace(/(_.)/g, function(word) {
           return word[1].toUpperCase()
         })
         tableInfo[field].field = field
         newTableInfo[newField] = tableInfo[field]
+        newTableFields.push(newField)
       })
       const modelName =
         table.indexOf(dbConfig.prefix) > -1
@@ -84,12 +89,26 @@ module.exports = {
             })
       const modelNameUpper = modelName.replace(/( |^)[a-z]/g, L => L.toUpperCase())
 
-      let model = sequelize.define(modelNameUpper, newTableInfo, {
-        tableName: table
-      })
-      model.drop = forbiddenMethod // 以防误删表
+      try {
+        let options = {
+          tableName: table
+        }
+
+        if (newTableFields.indexOf('createdAt') === -1) {
+          options.createdAt = false
+        }
+
+        if (newTableFields.indexOf('updatedAt') === -1) {
+          options.updatedAt = false
+        }
+
+        let model = sequelize.define(modelNameUpper, newTableInfo, options)
+        model.drop = forbiddenMethod // 以防误删表
+      } catch(e) {}
     })
 
     return true
   }
 }
+
+module.exports = new DatabaseLoader()
