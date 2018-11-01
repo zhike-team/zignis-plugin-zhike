@@ -6,12 +6,17 @@ const Utils = require('../../../../zignis/src/common/utils')
 
 exports.command = 'consul [keys..]'
 exports.desc = 'zhike consul config review'
+exports.aliases = 'config'
 
-exports.builder = function (yargs) {
-  yargs.default('quiet', false).alias('q', 'quiet')
+exports.builder = function(yargs) {
+  yargs.option('quiet', {
+    alias: 'q',
+    default: false,
+    describe: 'simple console log'
+  })
 }
 
-exports.handler = function (argv) {
+exports.handler = function(argv) {
   co(function*() {
     const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
     if (!argv.keys) {
@@ -20,14 +25,14 @@ exports.handler = function (argv) {
     }
 
     const keysPrefix = []
-    argv.keys.map((key) => {
+    argv.keys.map(key => {
       keysPrefix.push(key.split('.')[0])
     })
 
     delete global.CFG
     const consul = new Consul(keysPrefix, consulConfig[env].host, consulConfig[env].port, global, {
       output: false,
-      timeout: 5000,
+      timeout: 5000
     })
     const data = yield consul.pull(env)
 
@@ -37,11 +42,9 @@ exports.handler = function (argv) {
     })
 
     if (argv.quiet) {
-      console.log(JSON.stringify(pickNeededFromPull, null, 2));
-    }
-    else {
+      console.log(JSON.stringify(pickNeededFromPull, null, 2))
+    } else {
       Utils.log(pickNeededFromPull)
     }
   })
-  
 }

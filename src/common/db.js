@@ -12,7 +12,7 @@ class DatabaseLoader {
     return this.instances
   }
 
-  *load(consulKey, instanceKey = '') {
+  *load(consulKey, instanceKey = '', callback) {
     const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
     const keysPrefix = [consulKey.split('.')[0]]
 
@@ -104,8 +104,12 @@ class DatabaseLoader {
 
         let model = sequelize.define(modelNameUpper, newTableInfo, options)
         model.drop = forbiddenMethod // 以防误删表
-      } catch(e) {}
+      } catch (e) {}
     })
+
+    if (callback) {
+      callback(sequelize.models, sequelize)
+    }
 
     return true
   }
