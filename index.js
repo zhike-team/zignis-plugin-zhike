@@ -3,6 +3,7 @@ const consulConfig = require('./consul.json')
 const Redis = require('ioredis')
 const consulCommand = require('./src/commands/zhike/consul')
 const DatabaseLoader = require('./src/common/db')
+const co = require('co')
 
 const getRedis = function () {
   const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
@@ -40,9 +41,18 @@ module.exports = {
       }
     }
   },
-  db: new DatabaseLoader({ loadReturnInstance: true }),
-  redis: getRedis(),
-  cache: getRedis(),
-  consul: consulObject,
-  config: consulObject,
+  components: () => {
+    return co(function*() {
+      const redis = yield getRedis()
+      const db = new DatabaseLoader({ loadReturnInstance: true })
+      return {
+        db,
+        database: db,
+        redis,
+        cache: redis,
+        consul: consulObject,
+        config: consulObject,
+      }
+    })
+  }
 }
