@@ -2,7 +2,7 @@ const Consul = require('zhike-consul')
 const consulConfig = require('./consul.json')
 const Redis = require('ioredis')
 const consulCommand = require('./src/commands/zhike/consul')
-const db = require('./src/common/db')
+const DatabaseLoader = require('./src/common/db')
 
 module.exports = {
   *repl() {
@@ -26,11 +26,11 @@ module.exports = {
 
     return {
       zhike: {
-        db,
+        db: new DatabaseLoader(),
         redis,
         consul: consulObject
       }
     }
   },
-  db
+  db: new DatabaseLoader({ loadReturnInstance: true })
 }

@@ -4,7 +4,10 @@ const Sequelize = require('sequelize')
 const _ = require('lodash')
 
 class DatabaseLoader {
-  constructor() {
+  constructor(options) {
+    this.options = Object.assign({}, {
+      loadReturnInstance: false
+    }, options)
     this.instances = {}
   }
 
@@ -111,8 +114,10 @@ class DatabaseLoader {
       callback(sequelize.models, sequelize)
     }
 
-    return true
+    if (this.options.loadReturnInstance) {
+      return sequelize
+    }
   }
 }
 
-module.exports = new DatabaseLoader()
+module.exports = DatabaseLoader
