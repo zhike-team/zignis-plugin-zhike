@@ -20,28 +20,29 @@ const getRedis = function () {
   })
 }
 
+const consulObject = function (keys) {
+  keys = Array.isArray(keys) ? keys : keys.split(',')
+  return consulCommand.handler({ keys, silent: true })
+}
+
 module.exports = {
   *repl() {
-
-    const consulObject = {
-      get(keys) {
-        keys = Array.isArray(keys) ? keys : keys.split(',')
-        return consulCommand.handler({ keys, silent: true })
-      } 
-    }
-
     const redis = yield getRedis()
-
+    const db = new DatabaseLoader()
     return {
       zhike: {
-        db: new DatabaseLoader(),
+        db,
+        database: db,
         redis,
-        config: redis,
+        cache: redis,
         consul: consulObject,
         config: consulObject
       }
     }
   },
-  databaseLoader: new DatabaseLoader({ loadReturnInstance: true }),
-  redis: getRedis
+  db: new DatabaseLoader({ loadReturnInstance: true }),
+  redis: getRedis(),
+  cache: getRedis(),
+  consul: consulObject,
+  config: consulObject,
 }
