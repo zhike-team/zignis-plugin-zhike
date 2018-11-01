@@ -14,10 +14,15 @@ exports.builder = function(yargs) {
     default: false,
     describe: 'simple console log'
   })
+
+  yargs.option('silent', {
+    default: false,
+    describe: 'not console log result'
+  })
 }
 
 exports.handler = function(argv) {
-  co(function*() {
+  return co(function*() {
     const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
     if (!argv.keys) {
       console.log(Utils.chalk.red('Please provide at least 1 key'))
@@ -41,10 +46,14 @@ exports.handler = function(argv) {
       _.set(pickNeededFromPull, key, _.get(data.CFG, key))
     })
 
-    if (argv.quiet) {
-      console.log(JSON.stringify(pickNeededFromPull, null, 2))
+    if (!argv.silent) {
+      if (argv.quiet) {
+        console.log(JSON.stringify(pickNeededFromPull, null, 2))
+      } else {
+        Utils.log(pickNeededFromPull)
+      }
     } else {
-      Utils.log(pickNeededFromPull)
+      return pickNeededFromPull
     }
   })
 }

@@ -13,12 +13,17 @@ exports.builder = function(yargs) {
     default: false,
     describe: 'json parse before output'
   })
+  yargs.option('silent', {
+    default: false,
+    describe: 'do not console log the result'
+  })
 }
 
 exports.handler = function(argv) {
-  co(function*() {
+  return co(function*() {
     const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
 
+    delete global.CFG
     const consul = new Consul(['redis'], consulConfig[env].host, consulConfig[env].port, global, {
       output: false,
       timeout: 5000
@@ -28,12 +33,15 @@ exports.handler = function(argv) {
     const cache = new Redis(config.redis)
     const ret = yield cache[argv.cmd].apply(cache, argv.arguments)
 
-    if (argv.json) {
-      Utils.log(JSON.parse(ret))
-    } else {
-      Utils.log(ret)
+    if (!argv.silent) {
+      if (argv.json) {
+        Utils.log(JSON.parse(ret))
+      } else {
+        Utils.log(ret)
+      }
     }
+    
+    return ret
 
-    process.exit(0)
   })
 }

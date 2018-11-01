@@ -4,33 +4,44 @@ const Redis = require('ioredis')
 const consulCommand = require('./src/commands/zhike/consul')
 const DatabaseLoader = require('./src/common/db')
 
-module.exports = {
-  *repl() {
-    const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
+const getRedis = function () {
+  const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
 
-    // add zhike redis instance
-    delete global.CFG
-    const consul = new Consul(['redis'], consulConfig[env].host, consulConfig[env].port, global, {
-      output: false,
-      timeout: 5000
-    })
-    const data = yield consul.pull(env)
+  delete global.CFG
+  const consul = new Consul(['redis'], consulConfig[env].host, consulConfig[env].port, global, {
+    output: false,
+    timeout: 5000
+  })
+
+  return consul.pull(env).then(function(data) {
     const config = data.CFG
     const redis = new Redis(config.redis)
+    return redis
+  })
+}
+
+module.exports = {
+  *repl() {
+
     const consulObject = {
-      *get(keys) {
+      get(keys) {
         keys = Array.isArray(keys) ? keys : keys.split(',')
-        return consulCommand.handler({ keys })
+        return consulCommand.handler({ keys, silent: true })
       } 
     }
+
+    const redis = yield getRedis()
 
     return {
       zhike: {
         db: new DatabaseLoader(),
         redis,
-        consul: consulObject
+        config: redis,
+        consul: consulObject,
+        config: consulObject
       }
     }
   },
-  databaseLoader: new DatabaseLoader({ loadReturnInstance: true })
+  databaseLoader: new DatabaseLoader({ loadReturnInstance: true }),
+  redis: getRedis
 }
