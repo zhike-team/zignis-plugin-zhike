@@ -32,5 +32,5 @@ module.exports = {
       }
     }
   },
-  db: new DatabaseLoader({ loadReturnInstance: true })
+  databaseLoader: new DatabaseLoader({ loadReturnInstance: true })
 }
