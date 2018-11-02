@@ -123,6 +123,17 @@ class DatabaseLoader {
       }
     })
   }
+
+  associate(modelPath) {
+    return function(sequelize) {
+      Object.keys(sequelize.models).forEach((modelName) => {
+        if (fs.existsSync(`${modelPath}/${modelName}.js`)) {
+          let model = sequelize.models[modelName]
+          require(`${modelPath}/${modelName}`).bind(model)(sequelize.models)
+        }
+      })
+    }
+  }
 }
 
 module.exports = DatabaseLoader
