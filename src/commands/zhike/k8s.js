@@ -21,10 +21,10 @@ const filterContain = (list, keyword) => list.filter(item => item.indexOf(keywor
 
 exports.command = 'k8s <op> [keyword]'
 exports.desc = 'zhike k8s tools'
-exports.aliases = 'kubectl'
+exports.aliases = ['kubectl', 'docker', 'pod']
 
 exports.builder = function(yargs) {
-  yargs.default('namespace', 'c-production')
+  yargs.default('namespace', 'c-dev')
   yargs.alias('n', 'namespace')
 }
 
