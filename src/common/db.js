@@ -115,7 +115,7 @@ class DatabaseLoader {
       })
 
       if (callback) {
-        callback(sequelize.models, sequelize)
+        callback(sequelize)
       }
 
       if (that.options.loadReturnInstance) {
