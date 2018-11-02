@@ -3,6 +3,7 @@ const consulConfig = require('../../consul.json')
 const Sequelize = require('sequelize')
 const _ = require('lodash')
 const co = require('co')
+const fs = require('fs')
 
 class DatabaseLoader {
   constructor(options) {
