@@ -127,6 +127,7 @@ exports.handler = function(argv) {
 
       // 集合多个容器的输出
       case 'logs':
+      case 'log':
         if (filteredPods.length === 1) {
           const logsPods = filteredPods
             .map(p => `${kubectl.generateCommand(['logs', '--tail=4', '-f', p])}`)
