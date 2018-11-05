@@ -6,6 +6,8 @@ const shell = require('shelljs')
 const inquirer = require('inquirer')
 inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
 const fuzzy = require('fuzzy')
+const _ = require('lodash')
+const Utils = require('../../../../zignis/src/common/utils')
 
 const filterFuzzy = (list, keyword) =>
   list.filter(item =>
@@ -24,7 +26,7 @@ exports.desc = 'zhike k8s tools'
 exports.aliases = ['kubectl', 'docker', 'pod']
 
 exports.builder = function(yargs) {
-  yargs.default('namespace', 'c-dev')
+  yargs.default('namespace', _.get(Utils.getCombinedConfig(), 'commandDefault.zhike.k8s.namespace') || 'c-dev')
   yargs.alias('n', 'namespace')
 }
 
