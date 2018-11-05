@@ -79,6 +79,7 @@ exports.handler = function(argv) {
       // 在匹配的 pod 中选择一个进入 shell 环境
       case 'bash':
       case 'exec':
+      case 'rsh':
         if (filteredPods.length === 1) {
           spawn(kubectl.binary, kubectl.generateCommandArgs(['exec', '-it', filteredPods.shift(), 'bash']), {
             stdio: 'inherit'
