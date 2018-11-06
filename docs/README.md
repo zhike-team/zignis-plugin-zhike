@@ -59,12 +59,79 @@ $ zignis repl
 >>> await WechatUser.count()
 ```
 
-其中 zhike.db 的用法是专门针对公司的关系型数据库集群进行的封装，不需要自定义或者同步 schema，直接就可以使用，支持 mysql 和 postgres 两个数据库引擎，有过还有其他引擎，也可以基于 `Sequelize` 来进行扩展。
+其中 zhike.db 的用法是专门针对公司的关系型数据库集群，基于 `Sequelize` 进行的封装，不需要自定义或者同步 schema，直接就可以使用，支持 mysql 和 postgres 两个数据库引擎，有过还有其他引擎，也可以基于 `Sequelize` 来进行扩展。
 
 # 基于插件开发项目
 
 这个插件还有一个作用是，可以直接用于做项目开发，主要使用的是通过 components 暴露出来的对 配置，缓存和数据库的封装，可以在开发时直接操作数据库，不需要写太多和数据库初始化相关的逻辑。以下的代码演示了基本的使用方法。
 
-```
+**yield/co style:**
 
 ```
+const co = require('co')
+const path = require('path')
+
+const { components } = require('zignis-plugin-zhike')
+co(function* () {
+  const zhike = yield components()
+  const db = yield zhike.db.load('db/social', 'social', zhike.db.associate(path.resolve('./model')))
+  const { WechatUser, WechatApplication } = db.models
+  const user = yield WechatUser.findOne({
+    raw: true,
+    where: {
+      id: 13
+    },
+    include: [
+      {
+        model: WechatApplication,
+        as: 'wechatApplication',
+        required: true,
+      }
+    ]
+  })
+  console.log(user)
+  
+  const ossConfig = yield zhike.consul('oss')
+  console.log('config', ossConfig)
+
+  const redisKeys = yield zhike.redis.keys('*')
+  console.log('redisKeys', redisKeys)
+})
+```
+
+**async/await style:**
+
+```
+const { components } = require('zignis-plugin-zhike')
+const path = require('path')
+
+const start = async function () {
+  const zhike = await components()
+  const db = await  zhike.db.load('db/social', 'social', zhike.db.associate(path.resolve('./model')))
+  const { WechatUser, WechatApplication } = db.models
+  const user = await  WechatUser.findOne({
+    raw: true,
+    where: {
+      id: 13
+    },
+    include: [
+      {
+        model: WechatApplication,
+        as: 'wechatApplication',
+        required: true,
+      }
+    ]
+  })
+  console.log('user', user)
+
+  const ossConfig = await zhike.consul('oss')
+  console.log('config', ossConfig)
+
+  const redisKeys = await zhike.redis.keys('*')
+  console.log('redisKeys', redisKeys)
+}
+
+start()
+```
+
+很多项目其实已经有了自己的数据库机制的封装，所以不强求大家使用这个插件的机制，但是如果是在项目中写 `Zignis` 的项目相关的插件，就有两个选择，一个是把当前项目的初始化脚本导入获得项目环境，另一个就是使用本插件带来的基础设施，相比较而言，前者对项目的其他公共代码更友好，但对封装抽象的情况有要求，后者开箱即用，但很多业务逻辑可能需要重写一遍，正常情况下，建议综合考虑。
