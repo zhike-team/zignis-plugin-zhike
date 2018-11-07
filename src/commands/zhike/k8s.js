@@ -22,16 +22,25 @@ const filterFuzzy = (list, keyword) =>
 const filterContain = (list, keyword) => list.filter(item => item.indexOf(keyword) > -1)
 
 exports.command = 'k8s <op> [keyword]'
-exports.desc = 'zhike k8s tools'
+exports.desc = `zhike k8s tools`
 exports.aliases = ['kubectl', 'docker', 'pod']
 
 exports.builder = function(yargs) {
-  yargs.default('namespace', _.get(Utils.getCombinedConfig(), 'commandDefault.zhike.k8s.namespace') || 'c-dev')
-  yargs.alias('n', 'namespace')
+  yargs.option('namespace', {
+    alias: 'n',
+    default: _.get(Utils.getCombinedConfig(), 'commandDefault.zhike.k8s.namespace') || 'c-dev',
+    describe: 'k8s namespace, support all zhike development and production namespaces'
+  })
+
+  yargs.option('binary', {
+    default: _.get(Utils.getCombinedConfig(), 'commandDefault.zhike.k8s.binary') || '/usr/local/bin/kubectl',
+    describe: 'k8s kubectl absolute path, default is /usr/local/bin/kubectl'
+  })
 }
 
 exports.handler = function(argv) {
   const namespace = argv.namespace
+  const binary = argv.binary
   const configType = namespace.indexOf('production') > -1 ? 'production' : 'development'
   const configPathEnv = configType === 'development' ? 'ZIGNIS_ZHIKE_K8S_DEV' : 'ZIGNIS_ZHIKE_K8S_PROD'
   const kubeconfigPath = process.env[configPathEnv]
@@ -42,7 +51,7 @@ exports.handler = function(argv) {
   }
 
   const kubectl = new Kubectl('pods', {
-    binary: '/usr/local/bin/kubectl',
+    binary,
     kubeconfig: kubeconfigPath,
     version: '/api/v1',
     namespace
