@@ -43,6 +43,10 @@ k8s logs|log [keyword] 用于显示 pod 日志，可以在 keyword 筛选结果�
 
 redis 命令用于获取公司 redis 服务里的缓存数据，也可以执行其他简单的 redis 命令，基于 ioredis 开发，所以里面包含的所有方法都可以试试，但是复杂的命令由于受到命令行的限制，无法有效输入。此命令有个选项是 `--json`，当 Redis 里的值是 JSON 数据的时候，可以被 parse 从而格式化显示。
 
+**zinigs zhike login**
+
+login 命令用于提供一种让开发人员能够快速登录指定用户的方法，目前可以用于登录智课网，Smart学习系统，选校帝，批改网
+
 # 实现 repl 钩子
 
 `Node.js` 内置的 `node` 命令的 `REPL` 里可以用来尝试一些基本的 node 和 javascript 的用法，但是这还远远不够，我们希望 REPL 可以对项目开发有帮助，可以操作公司技术架构的各种基础设施。
