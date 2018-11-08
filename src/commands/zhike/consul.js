@@ -2,7 +2,7 @@ const co = require('co')
 const _ = require('lodash')
 const Consul = require('zhike-consul')
 const consulConfig = require('../../../consul.json')
-const Utils = require('../../../../zignis/src/common/utils')
+const { Utils } = require('zignis')
 
 exports.command = 'consul [keys..]'
 exports.desc = 'zhike consul config review'

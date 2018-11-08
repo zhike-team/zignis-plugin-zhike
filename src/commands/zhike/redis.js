@@ -1,8 +1,8 @@
 const co = require('co')
 const Consul = require('zhike-consul')
 const consulConfig = require('../../../consul.json')
-const Utils = require('../../../../zignis/src/common/utils')
 const Redis = require('ioredis')
+const { Utils } = require('zignis')
 
 exports.command = 'redis cmd [arguments..]'
 exports.desc = 'zhike redis tool, use ioredis'

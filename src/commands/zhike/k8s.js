@@ -7,7 +7,7 @@ const inquirer = require('inquirer')
 inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
 const fuzzy = require('fuzzy')
 const _ = require('lodash')
-const Utils = require('../../../../zignis/src/common/utils')
+const { Utils } = require('zignis')
 
 const filterFuzzy = (list, keyword) =>
   list.filter(item =>
