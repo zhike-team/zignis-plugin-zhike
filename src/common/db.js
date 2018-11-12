@@ -20,6 +20,13 @@ class DatabaseLoader {
   load(consulKey, instanceKey = '', callback) {
     let that = this
     return co(function* () {
+      instanceKey = instanceKey || consulKey
+      
+      // init db only once
+      if (that.instances[instanceKey]) {
+        return that.instances[instanceKey]
+      }
+
       const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
       const keysPrefix = [consulKey.split('.')[0]]
 
@@ -31,6 +38,10 @@ class DatabaseLoader {
 
       const data = yield consul.pull(env)
       let dbConfig = _.get(data.CFG, consulKey)
+      if (!dbConfig) {
+        throw new Error('consulKey not exist')
+      }
+
       if (dbConfig.options) {
         dbConfig = Object.assign({}, dbConfig, dbConfig.options)
       }
@@ -63,7 +74,6 @@ class DatabaseLoader {
 
       yield sequelize.authenticate()
 
-      instanceKey = instanceKey || consulKey
       that.instances[instanceKey] = sequelize
 
       const queryInterface = sequelize.getQueryInterface()
@@ -120,7 +130,7 @@ class DatabaseLoader {
       }
 
       if (that.options.loadReturnInstance) {
-        return sequelize
+        return that.instances[instanceKey]
       }
     })
   }
