@@ -69,8 +69,10 @@ exports.handler = function (argv) {
       tips: file.tips ? JSON.parse(file.tips) : {}
     })
 
-    console.log(Utils.chalk.cyan('Versions:'))
-    console.log(Utils.table(versionsTable))
+    if (versionsTable.length > 0) {
+      console.log(Utils.chalk.cyan('Versions:'))
+      console.log(Utils.table(versionsTable))
+    }
     process.exit(0)
   })
 }
