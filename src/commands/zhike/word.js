@@ -71,7 +71,7 @@ exports.handler = function (argv) {
       })
 
       if (!word) {
-        throw new Error('Word not found!')
+        console.log(Utils.chalk.red('Word not found!'))
       } else {
         const wordTable = []
         wordTable.push(['name', word.name])
