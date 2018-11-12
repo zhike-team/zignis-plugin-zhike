@@ -12,7 +12,12 @@ zhike related commands
 命令：
   zignis zhike consul [keys..]          zhike consul config review [aliases: config]
   zignis zhike k8s <op> [keyword]       zhike k8s tools [aliases: kubectl, docker, pod]
+  zignis zhike login <userId>           way to login zhike
+  zignis zhike order <orderId>          get order info
+  zignis zhike product <productId>      get product info
   zignis zhike redis cmd [arguments..]  zhike redis tool, use ioredis [aliases: cache]
+  zignis zhike slice <fileId>           get zhike slice info
+  zignis zhike word [word]              personal word test
 ```
 
 # 命令说明
@@ -43,9 +48,25 @@ k8s logs|log [keyword] 用于显示 pod 日志，可以在 keyword 筛选结果�
 
 redis 命令用于获取公司 redis 服务里的缓存数据，也可以执行其他简单的 redis 命令，基于 ioredis 开发，所以里面包含的所有方法都可以试试，但是复杂的命令由于受到命令行的限制，无法有效输入。此命令有个选项是 `--json`，当 Redis 里的值是 JSON 数据的时候，可以被 parse 从而格式化显示。
 
-**zinigs zhike login**
+**zignis zhike login**
 
-login 命令用于提供一种让开发人员能够快速登录指定用户的方法，目前可以用于登录智课网，Smart学习系统，选校帝，批改网
+login 命令用于提供一种让开发人员能够快速登录指定用户的方法，目前可以用于登录智课网，Smart 学习系统，选校帝，批改网
+
+**zignis zhike order**
+
+order 命令用于查看订单相关的信息，包括订单信息，商品信息，折扣信息，支付信息等
+
+**zignis zhike product**
+
+product 命令用于查看商品 参数是商品 ID，可以查看各种商品类型
+
+**zignis zhike slice**
+
+slice 命令用于查看智课视频切片相关信息
+
+**zignis zhike word**
+
+word 命令用于查看单词释义，如果不传参数，则是一个背单词的小功能
 
 # 实现 repl 钩子
 
@@ -94,7 +115,7 @@ co(function* () {
     ]
   })
   console.log(user)
-  
+
   const ossConfig = yield zhike.consul('oss')
   console.log('config', ossConfig)
 

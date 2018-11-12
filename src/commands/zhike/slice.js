@@ -2,34 +2,29 @@ const co = require('co')
 const { components } = require('../../../')
 const { Utils } = require('zignis')
 
-const format = function (file) {
+const format = function(file) {
   if (file.size >= 1024 * 1024 * 1024) {
-    file.sizeText = (file.size / 1024 / 1024 / 1024).toFixed(2) + 'GB';
-  }
-  else if (file.size >= 1024 * 1024) {
-    file.sizeText = (file.size / 1024 / 1024).toFixed(2) + 'MB';
-  }
-  else if (file.size >= 1024) {
+    file.sizeText = (file.size / 1024 / 1024 / 1024).toFixed(2) + 'GB'
+  } else if (file.size >= 1024 * 1024) {
+    file.sizeText = (file.size / 1024 / 1024).toFixed(2) + 'MB'
+  } else if (file.size >= 1024) {
     file.sizeText = (file.size / 1024).toFixed(2) + 'KB'
+  } else if (file.size === 0) {
+    file.sizeText = '---'
+  } else {
+    file.sizeText = file.size + 'B'
   }
-  else if (file.size === 0) {
-    file.sizeText = '---';
-  }
-  else {
-    file.sizeText = file.size + 'B';
-  }
-  return file;
-};
+  return file
+}
 
 exports.command = 'slice <fileId>'
 exports.desc = 'get zhike slice info'
 
-exports.builder = function (yargs) {
-}
+exports.builder = function(yargs) {}
 
-exports.handler = function (argv) {
-  co(function* () {
-    const { db } =  yield components()
+exports.handler = function(argv) {
+  co(function*() {
+    const { db } = yield components()
     const transcodeDb = yield db.load('db.transcode', 'transcode')
     const { File, FileFormat, Format } = transcodeDb.models
     const file = yield File.findOne({

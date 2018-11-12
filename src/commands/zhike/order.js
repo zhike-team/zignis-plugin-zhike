@@ -1,4 +1,3 @@
-
 const { components } = require('../../../')
 const { Utils } = require('zignis')
 
@@ -7,11 +6,10 @@ const co = require('co')
 exports.command = 'order <orderId>'
 exports.desc = 'get order info'
 
-exports.builder = function (yargs) {
-}
+exports.builder = function(yargs) {}
 
-exports.handler = function (argv) {
-  co(function* () {
+exports.handler = function(argv) {
+  co(function*() {
     const { db } = yield components()
     const orderDb = yield db.load('db.order', 'order')
     const { Order, OrderProduct, OrderPromotion } = orderDb.models
@@ -48,8 +46,6 @@ exports.handler = function (argv) {
       order: [['createdAt', 'ASC']]
     })
 
-
-
     console.log(Utils.chalk.cyan('Order:'))
     Utils.log(order)
 
@@ -61,7 +57,7 @@ exports.handler = function (argv) {
 
     console.log(Utils.chalk.cyan('Payments:'))
     Utils.log(orderPayments)
-    
+
     process.exit(0)
   })
 }

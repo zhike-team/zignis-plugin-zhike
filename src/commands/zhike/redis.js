@@ -40,8 +40,7 @@ exports.handler = function(argv) {
         Utils.log(ret)
       }
     }
-    
-    return ret
 
+    return ret
   })
 }
