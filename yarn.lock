@@ -1388,9 +1388,9 @@ zhike-consul@^1.0.12:
     bluebird "^3.4.6"
     consul "^0.27.0"
 
-zignis@^1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/zignis/-/zignis-1.0.8.tgz#b0ec70e8db9e4317cd8b6c11f80e056ea19e690a"
+zignis@^1.0.11:
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/zignis/-/zignis-1.0.11.tgz#b307111b04a497723a41225b9b88206f4e669f0d"
   dependencies:
     chalk "^2.4.1"
     co "^4.6.0"

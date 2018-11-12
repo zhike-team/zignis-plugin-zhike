@@ -70,7 +70,7 @@ exports.handler = function (argv) {
     })
 
     console.log(Utils.chalk.cyan('Versions:'))
-    Utils.outputTable(versionsTable)
+    console.log(Utils.table(versionsTable))
     process.exit(0)
   })
 }
