@@ -251,6 +251,12 @@ debug@^3.1.0:
   dependencies:
     ms "^2.1.1"
 
+debug@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.1.0.tgz#373687bffa678b38b1cd91f861b63850035ddc87"
+  dependencies:
+    ms "^2.1.1"
+
 decamelize@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/decamelize/-/decamelize-1.2.0.tgz#f6534d15148269b20352e7bee26f501f9a191290"
@@ -1070,6 +1076,10 @@ safe-buffer@^5.0.1, safe-buffer@^5.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
 
+seedrandom@^2.4.4:
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/seedrandom/-/seedrandom-2.4.4.tgz#b25ea98632c73e45f58b77cfaa931678df01f9ba"
+
 semver@4.3.2:
   version "4.3.2"
   resolved "http://registry.npmjs.org/semver/-/semver-4.3.2.tgz#c7a07158a80bedd052355b770d82d6640f803be7"
@@ -1358,8 +1368,8 @@ yargs-parser@^10.1.0:
     camelcase "^4.1.0"
 
 yargs-parser@^11.0.0:
-  version "11.0.0"
-  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-11.0.0.tgz#d9fd0f0cd551a2a2ef9bbf42606ffb6211634232"
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-11.1.0.tgz#0b8104116367bf663089b24e5801438ab50396a3"
   dependencies:
     camelcase "^5.0.0"
     decamelize "^1.2.0"
@@ -1388,9 +1398,9 @@ zhike-consul@^1.0.12:
     bluebird "^3.4.6"
     consul "^0.27.0"
 
-zignis@^1.0.11:
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/zignis/-/zignis-1.0.11.tgz#b307111b04a497723a41225b9b88206f4e669f0d"
+zignis@^1.0.12:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/zignis/-/zignis-1.0.12.tgz#421b65760bfe7a625f5545d570e71b9e35336186"
   dependencies:
     chalk "^2.4.1"
     co "^4.6.0"
@@ -1400,6 +1410,7 @@ zignis@^1.0.11:
     json-colorizer "^1.1.0"
     json-stringify-pretty-compact "^1.2.0"
     lodash "^4.17.10"
+    seedrandom "^2.4.4"
     shelljs "^0.8.1"
     table "^4.0.3"
     yargs "^12.0.2"
