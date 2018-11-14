@@ -90,27 +90,33 @@ exports.handler = function(argv) {
       })
 
     // 注册计划任务
-    Object.keys(jobs).forEach(key => {
-      if (jobs[key].disabled) return // ignore disabled job
-      cron.schedule(jobs[key].schedule, function() {
-        const redisKey = `${config.name}:cronjob:${key}`
-        const redisValue = Math.random()
-        debug(`${new Date().toLocaleString()} - JOB: [${key}] started!`)
-
-        co(function*() {
-          const ok = yield lock(
-            redisKey,
-            redisValue,
-            jobs[key].duration ? jobs[key].duration : DEFAULT_EXPIRE_MILLISECONDS
-          )
-          if (ok) {
-            yield shell.series(jobs[key].actions)
-            yield unlock(redisKey, redisValue)
-          } else {
-            debug('lock acquire failed.')
-          }
+    if (Object.keys(jobs).length > 0) {
+      Object.keys(jobs).forEach(key => {
+        if (jobs[key].disabled) return // ignore disabled job
+        cron.schedule(jobs[key].schedule, function() {
+          const redisKey = `${config.name}:cronjob:${key}`
+          const redisValue = Math.random()
+          debug(`${new Date().toLocaleString()} - JOB: [${key}] started!`)
+  
+          co(function*() {
+            const ok = yield lock(
+              redisKey,
+              redisValue,
+              jobs[key].duration ? jobs[key].duration : DEFAULT_EXPIRE_MILLISECONDS
+            )
+            if (ok) {
+              yield shell.series(jobs[key].actions)
+              yield unlock(redisKey, redisValue)
+            } else {
+              debug('lock acquire failed.')
+            }
+          })
         })
       })
-    })
+    } else {
+      console.log(Utils.chalk.red('No enabled cronjob found'))
+      process.exit(1)
+    }
   })
+    
 }
