@@ -68,6 +68,55 @@ slice 命令用于查看智课视频切片相关信息
 
 word 命令用于查看单词释义，如果不传参数，则是一个背单词的小功能
 
+**zignis zhike cron**
+
+cron 命令用于执行项目的计划任务，具体的计划任务是以 node 模块的形式存在的，计划任务存放目录在项目的 `.zignisrc.json` 文件中声明 `cronDir`，目录必须存在。计划任务文件格式如下：
+
+```
+// 任务执行周期，基于 `node-cron` npm 包
+exports.schedule = '* * * * *'
+// 任务最大执行时间，单位ms，也是任务的锁定时间，在锁定时间内，多实例部署也不会并发执行。要保证设置与任务执行周期相符，比如每分钟执行一次，一次最大执行60s
+exports.duration = 60000
+// 计划任务子任务数组，里面每一项可以是函数，也可以是 shell 命令字符串，要保证所有子任务在上面的执行时间内完成
+exports.actions = [demoAction]
+// 临时禁用计划任务，而不用删除文件，默认不写，意思是启用
+exports.disabled = true
+```
+
+以上计划任务文件可以不用手动创建，使用 `zignis make cron [name]` 即可自动创建基本的计划任务文件模板
+
+另外，我们有时可能想用 pm2 启动计划任务，以便可以进行线上部署，可以按如下的方式操作：
+
+```
+// package.json
+"scripts": {
+  "cron": "zignis zhike cron",
+},
+```
+
+```
+// pm2.yml
+apps:
+  - script: npm
+    args: 'run cron'
+    name: cron
+    exec_mode: fork
+    watch: true
+    ignore_watch: ['node_modules', '.git']
+    env:
+      NODE_ENV: development
+      DEBUG: zignis-*
+      DEBUG_HIDE_DATE: true
+      DEBUG_COLORS: true
+      DEBUG_DEPTH: 2
+```
+
+然后我们就可以通过 pm2 启动计划任务了：
+
+```
+$ pm2 start pm2.yml
+```
+
 # 实现 repl 钩子
 
 `Node.js` 内置的 `node` 命令的 `REPL` 里可以用来尝试一些基本的 node 和 javascript 的用法，但是这还远远不够，我们希望 REPL 可以对项目开发有帮助，可以操作公司技术架构的各种基础设施。
@@ -172,7 +221,9 @@ module.exports = function({ Account }) {
 
 可以看到，这里声明文件非常简洁，模块对外暴露的是一个函数方法，接受了一个数据库模型对象，从里面可以解构出数据库里所有的模型，模型的名字是大写首字母且不包含表前缀的，函数体内部的 `this` 代表模型本身，表关联用的是 `Sequelize` 的语法，除了创建表关联，还可以在里面为模型添加类方法和实例方法。让模型扩展和关联生效我们需要将模型所在目录传给 `db.load` 方法的第三个参数，由于是在另一个模块文件中进行的处理，所以这里必须传入模型所在目录的绝对路径。
 
-# 默认配置
+# 插件配置
+
+## 默认配置
 
 可以在 `$HOME/.zignis/.zignisrc.json` 文件中进行以下默认配置
 
@@ -190,3 +241,18 @@ module.exports = function({ Account }) {
     }
 }
 ```
+
+## 项目配置
+
+项目根目录的配置一般可以有以下几项：
+
+```
+// 项目根目录的 .zignisrc.json
+commandDir: 'bin/zignis/commands', // 命令目录
+pluginDir: 'bin/zignis/plugins', // 插件目录
+extendDir: 'bin/zignis/extends', // 插件扩展目录
+scriptDir: 'bin/zignis/scripts', // 脚本目录
+cronDir: 'bin/zignis/crons'  // 计划任务目录
+```
+
+可以通过 `zignis init` 进行初始化，不限于自动生成的几项，也可以根据项目需要添加新的配置项。

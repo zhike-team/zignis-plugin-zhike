@@ -91,6 +91,7 @@ exports.handler = function(argv) {
 
     // 注册计划任务
     Object.keys(jobs).forEach(key => {
+      if (jobs[key].disabled) return // ignore disabled job
       cron.schedule(jobs[key].schedule, function() {
         const redisKey = `${config.name}:cronjob:${key}`
         const redisValue = Math.random()
