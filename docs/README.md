@@ -34,10 +34,8 @@ zhike related commands
 
 `k8s` 命令的用处是封装了几个常用的 `kubectl` 命令，并且能够兼容开发和线上两个环境。k8s 命令有两个依赖，一个是需要用户本地安装了 `kubectl` 二进制命令；另一个是设置好授权配置文件，需要在 `.bashrc` 或 `.zshrc` 等系统用户配置文件中设置两个全局常量，ZIGNIS_ZHIKE_K8S_DEV 和 ZIGNIS_ZHIKE_K8S_PROD，需要配置的是绝对路径。
 
-k8s 的别名还有：kubectl, docker, pod 等，为了执行时敲打起来更加通顺流程。
-
 ```
-k8s list|ls [keyword] 查看 pod 列表，keyword关键字可以缩小列表范围，keyword 前面加上 `~` 可以进行模糊搜索，后面的命令也有这个特点
+k8s list|ls|pods [keyword] 查看 pod 列表，keyword关键字可以缩小列表范围，keyword 前面加上 `~` 可以进行模糊搜索，后面的命令也有这个特点
 k8s bash|exec|rsh [keyword] 用 bash 登录到容器中，如果筛选结果只有一个 pod，可以直接进入，如果有多个，则需要选择。
 k8s logs|log [keyword] 用于显示 pod 日志，可以在 keyword 筛选结果里再次进行多选，集合多个 pod 的日志一起事实查看日志。
 ```
