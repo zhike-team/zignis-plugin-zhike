@@ -4,7 +4,7 @@ const inquirer = require('inquirer')
 const co = require('co')
 
 exports.command = 'product <productId>'
-exports.desc = 'get product info'
+exports.desc = 'get zhike product info'
 
 exports.builder = function(yargs) {
   yargs.option('type', {
@@ -31,7 +31,6 @@ exports.handler = function(argv) {
 
     let ProductType = argv.type
     if (argv.select) {
-      
       const answers = yield inquirer.prompt([
         {
           type: 'list',
@@ -59,15 +58,15 @@ exports.handler = function(argv) {
       }
     })
 
-    switch(ProductType) {
+    switch (ProductType) {
       case 'Product':
         product.courses = JSON.parse(product.courses)
         product.overview = JSON.parse(product.overview)
         product.trailer = JSON.parse(product.trailer)
-        break;
+        break
       case 'CrmProduct':
         product.subTypeAddition = JSON.parse(product.subTypeAddition)
-        break;
+        break
     }
 
     if (ProductType === 'Product') {

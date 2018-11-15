@@ -4,7 +4,7 @@ const { Utils } = require('zignis')
 const co = require('co')
 
 exports.command = 'order <orderId>'
-exports.desc = 'get order info'
+exports.desc = 'get zhike order info'
 
 exports.builder = function(yargs) {}
 

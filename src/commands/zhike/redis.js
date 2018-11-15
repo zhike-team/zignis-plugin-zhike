@@ -5,7 +5,7 @@ const Redis = require('ioredis')
 const { Utils } = require('zignis')
 
 exports.command = 'redis cmd [arguments..]'
-exports.desc = 'zhike redis tool, use ioredis'
+exports.desc = 'zhike redis tools'
 exports.aliases = 'cache'
 
 exports.builder = function(yargs) {
