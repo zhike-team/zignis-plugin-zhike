@@ -1,11 +1,4 @@
-module.exports = function({
-  Crm2MarketActivity,
-  BindHmsr,
-  BindHmpl,
-  BindHmmd,
-  BindHmkw,
-  BindSite
-}) {
+module.exports = function({ Crm2MarketActivity, BindHmsr, BindHmpl, BindHmmd, BindHmkw, BindSite }) {
   this.belongsTo(Crm2MarketActivity, {
     constraints: false,
     foreignKey: 'marketActivityId'

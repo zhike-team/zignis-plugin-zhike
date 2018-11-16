@@ -60,6 +60,18 @@ exports.handler = function(argv) {
 
   const config = Utils.getCombinedConfig()
   co(function*() {
+    // run specific job for testing, ignore disabled property
+    if (argv.job && fs.existsSync(path.resolve(process.cwd(), argv.job))) {
+      const jobModule = require(path.resolve(process.cwd(), argv.job))
+      if (jobModule && jobModule.actions && Utils._.isArray(jobModule.actions)) {
+        yield shell.series(jobModule.actions)
+      } else {
+        Utils.error('Job not valid')
+      }
+    } else {
+      Utils.error('Job not found')
+    }
+
     const { redis } = yield components()
 
     // Redis锁，加锁
@@ -100,7 +112,7 @@ exports.handler = function(argv) {
           const redisKey = `${config.name}:cronjob:${key}`
           const redisValue = Math.random()
           debug(`${new Date().toLocaleString()} - JOB: [${key}] started!`)
-  
+
           co(function*() {
             const ok = yield lock(
               redisKey,
@@ -121,5 +133,4 @@ exports.handler = function(argv) {
       process.exit(1)
     }
   })
-    
 }
