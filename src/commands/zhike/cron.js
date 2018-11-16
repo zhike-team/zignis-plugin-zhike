@@ -45,6 +45,9 @@ const shell = {
   }
 }
 
+exports.command = 'cron [job]'
+exports.desc = `zhike cron system`
+
 exports.builder = function(yargs) {
   // yargs.option('option', {default, describe, alias})
 }
