@@ -353,3 +353,26 @@ exports.genMigrationForField = function*(table, field, sequelize, dbConfig, opti
   const migration = beautify(util.format(MIGRATION_TEMPLATE, up, down), { indent_size: 2 })
   return migration
 }
+
+exports.genFileSuffix = function(options) {
+  let locals = { tableName: options.tableName }
+  let action = 'create'
+  let entity = 'table ${tableName}'
+  let to = ''
+  if (options.fieldName) {
+    entity += ' field ${fieldName}'
+    locals.fieldName = options.fieldName
+  }
+
+  if (options.rename) {
+    action = 'rename'
+    to = 'to ${rename}'
+    locals.rename = options.rename
+  }
+
+  if (options.modify) {
+    action = 'modify'
+  }
+
+  return Utils._.template(`${action} ${entity} ${to}`)(locals)
+}

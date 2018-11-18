@@ -15,7 +15,7 @@ exports.builder = function(yargs) {
   yargs.option('modify', { default: false, describe: 'modify field defination' })
 
   yargs.option('only-up', { default: false, describe: 'empty down process' })
-  yargs.option('simulate', { default: false, describe: 'only output in stdout' })
+  yargs.option('simulate', { default: true, describe: 'only output in stdout' })
   yargs.option('reverse', { default: false, describe: 'reverse up and down' })
   yargs.option('migration-dir', { default: false, describe: 'change migration dir' })
 }
@@ -48,8 +48,9 @@ exports.handler = function(argv) {
         Utils.error('"migrationDir" missing in config file or not exist in current directory!')
       }
 
+      const fileName = migration.genFileSuffix(argv)
       const filePrefix = Utils.day().format('YYYYMMDDHHmmssSSS')
-      const migrationFile = path.resolve(argv.migrationDir, `${filePrefix}_${Utils._.kebabCase(argv.name)}.js`)
+      const migrationFile = path.resolve(argv.migrationDir, `${filePrefix}_${Utils._.kebabCase(fileName)}.js`)
       if (fs.existsSync(migrationFile)) {
         Utils.error('File exist!')
       }

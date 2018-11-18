@@ -65,6 +65,7 @@ exports.handler = function(argv) {
       const jobModule = require(path.resolve(process.cwd(), argv.job))
       if (jobModule && jobModule.actions && Utils._.isArray(jobModule.actions)) {
         yield shell.series(jobModule.actions)
+        process.exit(0)
       } else {
         Utils.error('Job not valid')
       }
