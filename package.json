@@ -17,6 +17,7 @@
     "inquirer": "^6.2.0",
     "inquirer-autocomplete-prompt": "^1.0.1",
     "ioredis": "^4.2.0",
+    "js-beautify": "^1.8.8",
     "k8s": "^0.4.15",
     "lodash": "^4.17.10",
     "mysql2": "^1.6.1",
@@ -26,6 +27,7 @@
     "sequelize": "^4.41.0",
     "shelljs": "^0.8.2",
     "thunkify-wrap": "^1.0.4",
+    "tosource": "^1.0.0",
     "zhike-consul": "^1.0.12"
   },
   "peerDependencies": {

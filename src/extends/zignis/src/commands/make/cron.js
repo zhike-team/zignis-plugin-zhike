@@ -14,7 +14,7 @@ exports.builder = function(yargs) {
 
 exports.handler = function(argv) {
   if (!argv.cronDir || !fs.existsSync(argv.cronDir)) {
-    console.log(chalk.red('"cronDir" missing in config file or not exist in current directory!'))
+    console.log(Utils.chalk.red('"cronDir" missing in config file or not exist in current directory!'))
     return
   }
 
@@ -37,6 +37,7 @@ const demoAction = async function demo() {
 exports.schedule = '* * * * *'
 exports.duration = 60000
 exports.actions = [demoAction]
+exports.disabled = false
 
 `
   if (!fs.existsSync(cronFile)) {
