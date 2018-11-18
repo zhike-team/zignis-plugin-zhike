@@ -10,15 +10,14 @@ exports.desc = 'db migrate tool'
 exports.aliases = 'migration'
 
 exports.builder = function(yargs) {
-  // attributes, 用于新表，新字段，修改历史字段
-  // yargs.option('attributes', {default, describe, alias})
+  yargs.option('attributes', { default: false, describe: 'define attributes for table/field' })
   yargs.option('rename', { default: false, describe: 'rename table/field name' })
   yargs.option('modify', { default: false, describe: 'modify field defination' })
 
   yargs.option('only-up', { default: false, describe: 'empty down process' })
   yargs.option('simulate', { default: false, describe: 'only output in stdout' })
   yargs.option('reverse', { default: false, describe: 'reverse up and down' })
-  yargs.option('migration-dir', { default: '', describe: 'change migration dir' })
+  yargs.option('migration-dir', { default: false, describe: 'change migration dir' })
 }
 
 exports.handler = function(argv) {
@@ -33,16 +32,7 @@ exports.handler = function(argv) {
 
     const dbConfig = Utils._.get(yield config(argv.dbKey), argv.dbKey)
 
-    const queryInterface = dbInstance.getQueryInterface()
-    const tables = yield queryInterface.showAllTables()
-    let tableName = argv.tableName
-
-    if (tables.indexOf(tableName) === -1 && dbConfig.prefix) {
-      tableName = dbConfig.prefix + tableName
-      if (tables.indexOf(tableName) === -1) {
-        Utils.error('Table not found')
-      }
-    }
+    let tableName = dbConfig.prefix ? dbConfig.prefix + argv.tableName : argv.tableName
 
     let ret
     if (argv.fieldName) {

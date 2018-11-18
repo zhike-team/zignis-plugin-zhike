@@ -5,6 +5,8 @@ const _ = require('lodash')
 const beautify = require('js-beautify')
 const tosource = require('tosource')
 
+const { Utils } = require('zignis')
+
 const MIGRATION_TEMPLATE =
   // args: up & down
   `'use strict';
@@ -134,66 +136,136 @@ const genFieldType = function(_attr) {
   return val
 }
 
-const genAttrForOneTable = function*(table, sequelize, dbConfig) {
-  const sequelizeInterface = sequelize.getQueryInterface()
-  let attrs = yield sequelizeInterface.describeTable(table)
-
-  let sql = schemaInfo.getForeignKeysQuery(table)
-  let info
-
-  if (dbConfig.options) {
-    dbConfig = Object.assign({}, dbConfig, dbConfig.options)
+const validateDataType = function(dataType, sequelize) {
+  const DataTypes = sequelize.Sequelize.DataTypes
+  if (!DataTypes[dataType.toUpperCase()]) {
+    Utils.error(`Unknown type '${dataType}'`)
   }
 
-  if (dbConfig.dialect === 'postgresql' || dbConfig.dialect === 'postgres') {
-    info = yield sequelize.query(sql, {
-      type: sequelize.QueryTypes.SELECT,
-      raw: true
-    })
-  }
-
-  for (let item in attrs) {
-    const attr = attrs[item]
-    if (info && schemaInfo.isSerialKey(info[0], item)) {
-      attr.autoIncrement = true
-      attr.defaultValue = null
-    }
-
-    if (_.has(attr, 'primaryKey') && !attr.primaryKey) {
-      delete attr.primaryKey
-    }
-    if (Array.isArray(attr.special) && attr.special.length === 0) {
-      delete attr.special
-    }
-    if (attr.defaultValue === null) {
-      delete attr.defaultValue
-    }
-
-    if (attr.allowNull) {
-      delete attr.allowNull
-    }
-
-    attr.type = genFieldType(attr.type)
-  }
-  return attrs
+  return dataType
 }
 
-exports.genAttrForAllTables = function*(sequelize) {
-  const sequelizeInterface = sequelize.getQueryInterface()
-  const dir = path.join(__dirname, '..', 'src', 'models', 'attributes')
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir)
-  }
-  const tables = yield sequelizeInterface.showAllTables()
-  console.log('update table attributes...\n')
-  for (let i = 0; i < tables.length; i++) {
-    const file = path.join(dir, tables[i])
-    if (!fs.existsSync(file)) {
-      const attrs = yield* genAttrForOneTable(tables[i], sequelize)
-      fs.writeFileSync(file, JSON.stringify(attrs, null, 2).replace(/\n/g, '\n    '))
+const formatAttributes = function(attribute) {
+  let result
+  const split = attribute.split(':')
+
+  if (split.length === 2) {
+    result = { fieldName: split[0], dataType: split[1], dataFunction: null }
+  } else if (split.length === 3) {
+    const isValidFunction = validAttributeFunctionType === split[1].toLowerCase()
+    const isValidValue = validAttributeFunctionType !== split[2].toLowerCase()
+
+    if (isValidFunction && isValidValue) {
+      result = { fieldName: split[0], dataType: split[2], dataFunction: split[1] }
     }
   }
-  console.log('update table attributes done.')
+  return result
+}
+
+const transformAttributes = function(flag, sequelize) {
+  /*
+    possible flag formats:
+    - first_name:string,last_name:string,bio:text,reviews:array:string
+    - 'first_name:string last_name:string bio:text reviews:array:string'
+    - 'first_name:string, last_name:string, bio:text, reviews:array:string'
+  */
+
+  const attributeStrings = flag.replace(/,/g, ' ').split(/\s+/)
+
+  return attributeStrings.map(attribute => {
+    const formattedAttribute = formatAttributes(attribute)
+
+    try {
+      validateDataType(formattedAttribute.dataType, sequelize)
+    } catch (err) {
+      Utils.error(`Attribute '${attribute}' cannot be parsed: ${err.message}`)
+    }
+
+    return formattedAttribute
+  })
+}
+
+const genAttrForOneTable = function*(table, sequelize, dbConfig, options) {
+  const queryInterface = sequelize.getQueryInterface()
+  const tables = yield queryInterface.showAllTables()
+
+  const optionAttrs = {}
+  if (options.attributes) {
+    const attrsTransformed = transformAttributes(options.attributes, sequelize)
+    optionAttrs.id = {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: 'Sequelize.INTEGER'
+    }
+
+    attrsTransformed.forEach(attribute => {
+      optionAttrs[attribute.fieldName] = {
+        type: attribute.dataFunction
+          ? `Sequelize.${attribute.dataFunction.toUpperCase()}(Sequelize.${attribute.dataType.toUpperCase()})`
+          : `Sequelize.${attribute.dataType.toUpperCase()}`
+      }
+    })
+
+    if (!options.disableTimestamps) {
+      optionAttrs.createdAt = {
+        allowNull: false,
+        type: 'Sequelize.DATE'
+      }
+    }
+
+    if (!options.disableTimestamps) {
+      optionAttrs.updatedAt = {
+        allowNull: false,
+        type: 'Sequelize.DATE'
+      }
+    }
+  }
+
+  let attrs = {}
+  if (tables.indexOf(table) !== -1) {
+    // get attrs from database
+    let sql = schemaInfo.getForeignKeysQuery(table)
+    let info
+
+    if (dbConfig.options) {
+      dbConfig = Object.assign({}, dbConfig, dbConfig.options)
+    }
+
+    if (dbConfig.dialect === 'postgresql' || dbConfig.dialect === 'postgres') {
+      info = yield sequelize.query(sql, {
+        type: sequelize.QueryTypes.SELECT,
+        raw: true
+      })
+    }
+
+    attrs = yield queryInterface.describeTable(table)
+    for (let item in attrs) {
+      const attr = attrs[item]
+      if (info && schemaInfo.isSerialKey(info[0], item)) {
+        attr.autoIncrement = true
+        attr.defaultValue = null
+      }
+
+      if (_.has(attr, 'primaryKey') && !attr.primaryKey) {
+        delete attr.primaryKey
+      }
+      if (Array.isArray(attr.special) && attr.special.length === 0) {
+        delete attr.special
+      }
+      if (attr.defaultValue === null) {
+        delete attr.defaultValue
+      }
+
+      if (attr.allowNull) {
+        delete attr.allowNull
+      }
+
+      attr.type = genFieldType(attr.type)
+    }
+  }
+
+  return { attrs, optionAttrs }
 }
 
 exports.genMigrationForTable = function*(table, sequelize, dbConfig, options) {
@@ -203,10 +275,19 @@ exports.genMigrationForTable = function*(table, sequelize, dbConfig, options) {
     up = util.format(RENAME_TABLE_TEMPLATE, table, newName)
     down = util.format(RENAME_TABLE_TEMPLATE, newName, table)
   } else {
-    const attrs = yield genAttrForOneTable(table, sequelize, dbConfig)
+    const { attrs, optionAttrs } = yield genAttrForOneTable(table, sequelize, dbConfig, options)
 
-    up = util.format(CREATE_TABLE_TEMPLATE, table, tosource(attrs).replace(/"(Sequelize(.*?))"/g, '$1'))
-    down = util.format(DROP_TABLE_TEMPLATE, table)
+    if (options.attributes) {
+      up = util.format(CREATE_TABLE_TEMPLATE, table, tosource(optionAttrs).replace(/"(Sequelize(.*?))"/g, '$1'))
+      down = util.format(DROP_TABLE_TEMPLATE, table)
+    } else {
+      if (attrs && Object.keys(attrs).length > 0) {
+        up = util.format(CREATE_TABLE_TEMPLATE, table, tosource(attrs).replace(/"(Sequelize(.*?))"/g, '$1'))
+        down = util.format(DROP_TABLE_TEMPLATE, table)
+      } else {
+        up = down = ''
+      }
+    }
   }
   if (options.reverse) {
     down = [up, (up = down)][0] // swap
@@ -225,19 +306,39 @@ exports.genMigrationForField = function*(table, field, sequelize, dbConfig, opti
     up = util.format(RENAME_FIELD_TEMPLATE, table, field, options.rename)
     down = util.format(RENAME_FIELD_TEMPLATE, table, options.rename, field)
   } else {
-    const attrs = yield* genAttrForOneTable(table, sequelize, dbConfig)
-    if (!attrs || !attrs[field]) {
-      console.error(`No such field: ${table}.${field}`)
-      return null
-    }
-    const attr = attrs[field]
-    const attrStr = tosource(attr).replace(/"(Sequelize(.*?))"/g, '$1')
+    const { attrs, optionAttrs } = yield genAttrForOneTable(table, sequelize, dbConfig, options)
+
     if (options.modify) {
-      up = `// @TODO`
+      if (!optionAttrs || !optionAttrs[field]) {
+        Utils.error(`No such field: ${table}.${field} in options.attributes`)
+      }
+
+      if (!attrs || !attrs[field]) {
+        Utils.error(`No such field: ${table}.${field} in database`)
+      }
+
+      const attrStr = tosource(attrs[field]).replace(/"(Sequelize(.*?))"/g, '$1')
+      const optionAttrStr = tosource(optionAttrs[field]).replace(/"(Sequelize(.*?))"/g, '$1')
+      up = util.format(MODIFY_FIELD_TEMPLATE, table, field, optionAttrStr)
       down = util.format(MODIFY_FIELD_TEMPLATE, table, field, attrStr)
     } else {
-      up = util.format(CREATE_FIELD_TEMPLATE, table, field, attrStr)
-      down = util.format(DROP_FIELD_TEMPLATE, table, field)
+      let attrStr
+      if (options.attributes) {
+        if (!optionAttrs || !optionAttrs[field]) {
+          Utils.error(`No such field: ${table}.${field} in options.attributes`)
+        }
+        attrStr = tosource(optionAttrs[field]).replace(/"(Sequelize(.*?))"/g, '$1')
+        up = util.format(CREATE_FIELD_TEMPLATE, table, field, attrStr)
+        down = util.format(DROP_FIELD_TEMPLATE, table, field)
+      } else {
+        if (attrs[field]) {
+          attrStr = tosource(attrs[field]).replace(/"(Sequelize(.*?))"/g, '$1')
+          up = util.format(CREATE_FIELD_TEMPLATE, table, field, attrStr)
+          down = util.format(DROP_FIELD_TEMPLATE, table, field)
+        } else {
+          up = down = ''
+        }
+      }
     }
   }
 

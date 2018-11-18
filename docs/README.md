@@ -115,6 +115,40 @@ apps:
 $ pm2 start pm2.yml
 ```
 
+**zignis zhike db**
+
+db 命令提供了几个和数据库相关的子命令，提供了一些常用的功能：
+
+```
+db list|ls <dbKey> 列出某一个数据库所有的表名
+db describe|desc <dbKey> <tableName> 显示某个数据库中的某个表的字段结构定义
+db migrate|migration <dbKey> <tableName> [fieldName] 可以自动生成基本的migration文件结构
+```
+
+db migration 子命令的选项比较多，所以这里要列一下：
+
+```
+zignis zhike db migrate <dbKey> <tableName> [fieldName]
+
+db migrate tool
+
+选项：
+  --attributes               define attributes for table/field   [默认值: false]
+  --rename                   rename table/field name             [默认值: false]
+  --modify                   modify field defination             [默认值: false]
+  --only-up                  empty down process                  [默认值: false]
+  --simulate                 only output in stdout               [默认值: false]
+  --reverse                  reverse up and down                 [默认值: false]
+  --migration-dir            change migration dir                [默认值: false]
+  --disable-ten-temporarily                                      [默认值: false]
+```
+
+可能的 attributes 写法:
+
+- first_name:string,last_name:string,bio:text,reviews:array:string
+- 'first_name:string last_name:string bio:text reviews:array:string'
+- 'first_name:string, last_name:string, bio:text, reviews:array:string'
+
 # 实现 repl 钩子
 
 `Node.js` 内置的 `node` 命令的 `REPL` 里可以用来尝试一些基本的 node 和 javascript 的用法，但是这还远远不够，我们希望 REPL 可以对项目开发有帮助，可以操作公司技术架构的各种基础设施。
@@ -250,7 +284,8 @@ commandDir: 'bin/zignis/commands', // 命令目录
 pluginDir: 'bin/zignis/plugins', // 插件目录
 extendDir: 'bin/zignis/extends', // 插件扩展目录
 scriptDir: 'bin/zignis/scripts', // 脚本目录
-cronDir: 'bin/zignis/crons'  // 计划任务目录
+cronDir: 'bin/zignis/crons',  // 计划任务目录
+migrationDir: 'bin/zignis/migrations' // 数据库迁移文件目录，大多数项目是有自己指定的目录的
 ```
 
 可以通过 `zignis init` 进行初始化，不限于自动生成的几项，也可以根据项目需要添加新的配置项。

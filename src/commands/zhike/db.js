@@ -1,6 +1,6 @@
 exports.command = 'db <op>'
 exports.desc = 'zhike db tools'
-// exports.alias = ''
+exports.aliases = 'database'
 
 exports.builder = function(yargs) {
   yargs.commandDir('db')
