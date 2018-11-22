@@ -1,6 +1,6 @@
 {
   "development": {
-    "host": "dev.smartstudy.com",
+    "host": "confsrv.smartstudy.tech",
     "port": 8500
   },
   "test": {
