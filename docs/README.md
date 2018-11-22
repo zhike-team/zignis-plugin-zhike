@@ -157,7 +157,7 @@ db migrate tool
 
 ```
 $ zignis repl
->>> await zhike.consul('oss')
+>>> await zhike.consul.get('oss')
 >>> await zhike.redis.keys('*')
 >>> await zhike.redis.get('REDIS_KEY')
 >>> await zhike.db.load('db/social', 'social')
@@ -197,7 +197,7 @@ co(function* () {
   })
   console.log(user)
 
-  const ossConfig = yield zhike.consul('oss')
+  const ossConfig = yield zhike.consul.get('oss')
   console.log('config', ossConfig)
 
   const redisKeys = yield zhike.redis.keys('*')
@@ -230,7 +230,7 @@ const start = async function () {
   })
   console.log('user', user)
 
-  const ossConfig = await zhike.consul('oss')
+  const ossConfig = await zhike.consul.get('oss')
   console.log('config', ossConfig)
 
   const redisKeys = await zhike.redis.keys('*')
@@ -268,8 +268,6 @@ module.exports = function({ Account }) {
             "binary": "/usr/local/bin/kubectl" # 默认使用的 kubectl 命令的绝对路径
           }
         }
-
-
     }
 }
 ```

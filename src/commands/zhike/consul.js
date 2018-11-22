@@ -53,7 +53,7 @@ exports.handler = function(argv) {
         Utils.log(pickNeededFromPull)
       }
     } else {
-      return pickNeededFromPull
+      return { result: pickNeededFromPull, zhikeConsul: consul, env }
     }
   })
 }
