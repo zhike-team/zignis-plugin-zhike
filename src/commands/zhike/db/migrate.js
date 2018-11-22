@@ -15,7 +15,7 @@ exports.builder = function(yargs) {
   yargs.option('modify', { default: false, describe: 'modify field defination' })
 
   yargs.option('only-up', { default: false, describe: 'empty down process' })
-  yargs.option('simulate', { default: true, describe: 'only output in stdout' })
+  yargs.option('simulate', { default: false, describe: 'only output in stdout' })
   yargs.option('reverse', { default: false, describe: 'reverse up and down' })
   yargs.option('migration-dir', { default: false, describe: 'change migration dir' })
 }
@@ -30,7 +30,7 @@ exports.handler = function(argv) {
       Utils.error(e.message)
     }
 
-    const dbConfig = Utils._.get(yield config(argv.dbKey), argv.dbKey)
+    const dbConfig = Utils._.get(yield config.get(argv.dbKey), argv.dbKey)
 
     let tableName = dbConfig.prefix ? dbConfig.prefix + argv.tableName : argv.tableName
 
@@ -40,7 +40,7 @@ exports.handler = function(argv) {
     } else {
       ret = yield migration.genMigrationForTable(tableName, dbInstance, dbConfig, argv)
     }
-
+    
     if (argv.simulate) {
       console.log(ret)
     } else {

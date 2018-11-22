@@ -110,7 +110,7 @@ exports.handler = function(argv) {
       Utils.error(e.message)
     }
 
-    let dbConfig = Utils._.get(yield config(argv.dbKey), argv.dbKey)
+    let dbConfig = Utils._.get(yield config.get(argv.dbKey), argv.dbKey)
     if (dbConfig.options) {
       dbConfig = Object.assign({}, dbConfig, dbConfig.options)
     }

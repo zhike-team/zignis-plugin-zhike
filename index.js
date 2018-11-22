@@ -44,7 +44,7 @@ const consulObject = {
         watch.once('change', function () { // 初始会有一次 change 事件，忽略第一次的事件
           watch.on('change', function (data) {
             let value = JSON.parse(data.Value)[env]
-            debug(`CFG ${key} changed to:!`, value)
+            debug(`CFG ${key} changed to:`, value)
             callback && callback(key, value)
           })
 
