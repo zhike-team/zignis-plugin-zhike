@@ -40,13 +40,13 @@ const getPostgresFieldsCommentContent = function*(db, tableName) {
       set.add(item.name)
       // 注释
       content.comment = item.comment
-      if (content.name === 'createdAt') {
+      if (content.key === 'createdAt') {
         content.comment = '创建时间'
       }
-      if (content.name === 'updatedAt') {
+      if (content.key === 'updatedAt') {
         content.comment = '更新时间'
       }
-      if (content.name === 'deletedAt') {
+      if (content.key === 'deletedAt') {
         content.comment = '删除时间'
       }
 
@@ -137,7 +137,7 @@ exports.handler = function(argv) {
     Object.keys(tableDescribed).forEach(function(field) {
       const info = tableDescribed[field]
 
-      const foundField = fieldsCommentContent && Utils._.find(fieldsCommentContent, { name: field })
+      const foundField = fieldsCommentContent && Utils._.find(fieldsCommentContent, { key: field })
       const line = [field, info.type, info.allowNull, info.defaultValue, info.primaryKey]
 
       if (foundField) {
