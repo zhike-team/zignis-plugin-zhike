@@ -50,16 +50,27 @@ exports.handler = function(argv) {
         }
       })
 
-      versionsTable.push([version.id, format.name, version.status ? '已完成' : '未完成', version.dest])
+      let url
+      if (version.dest) {
+        if ([7, 8].indexOf(version.formatId) !== -1) {
+          url = `https://media7.smartstudy.com${JSON.parse(version.dest).cdn}/dest.mp4`
+        } else if ([1, 3].indexOf(version.formatId) !== -1) {
+          url = `https://media6.smartstudy.com${version.dest}/dest.mpd`
+        } else if ([2, 4, 5].indexOf(version.formatId) !== -1) {
+          url = `https://media6.smartstudy.com${version.dest}/dest.m3u8`
+        }
+      }
+
+      versionsTable.push([version.id, format.name, version.status ? '已完成' : '未完成', url])
     }
 
-    // console.log(file)
+    const fileFormat = format(file)
     console.log(Utils.chalk.cyan('Basic:'))
     Utils.log({
       id: file.id,
       name: file.name,
       fatherId: file.fatherId,
-      size: format(file.size),
+      size: fileFormat.sizeText,
       duration: `${file.duration / 60}分钟`,
       tips: file.tips ? JSON.parse(file.tips) : {}
     })
