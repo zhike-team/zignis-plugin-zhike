@@ -1,4 +1,9 @@
 const co = require('co')
+const inquirer = require('inquirer')
+inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
+const fuzzy = require('fuzzy')
+const Sequelize = require('sequelize')
+const Op = Sequelize.Op
 const { components } = require('../../../')
 const { Utils } = require('zignis')
 
@@ -17,7 +22,56 @@ const format = function(file) {
   return file
 }
 
-exports.command = 'slice <fileId>'
+const processSlice = function * (file, { FileFormat, Format }) {
+  const versions = yield FileFormat.findAll({
+    raw: true,
+    where: {
+      fileId: file.id
+    }
+  })
+
+  const versionsTable = []
+
+  for (let i = 0; i < versions.length; i++) {
+    const version = versions[i]
+    const format = yield Format.findOne({
+      where: {
+        id: version.formatId
+      }
+    })
+
+    let url
+    if (version.dest) {
+      if ([7, 8].indexOf(version.formatId) !== -1) {
+        url = `https://media7.smartstudy.com${JSON.parse(version.dest).cdn}/dest.mp4`
+      } else if ([1, 3].indexOf(version.formatId) !== -1) {
+        url = `https://media6.smartstudy.com${version.dest}/dest.mpd`
+      } else if ([2, 4, 5].indexOf(version.formatId) !== -1) {
+        url = `https://media6.smartstudy.com${version.dest}/dest.m3u8`
+      }
+    }
+
+    versionsTable.push([version.id, format.name, version.status ? '已完成' : '未完成', url])
+  }
+
+  const fileFormat = format(file)
+  console.log(Utils.chalk.cyan('Basic:'))
+  Utils.log({
+    id: file.id,
+    name: file.name,
+    fatherId: file.fatherId,
+    size: fileFormat.sizeText,
+    duration: `${file.duration / 60}分钟`,
+    tips: file.tips ? JSON.parse(file.tips) : {}
+  })
+
+  if (versionsTable.length > 0) {
+    console.log(Utils.chalk.cyan('Versions:'))
+    console.log(Utils.table(versionsTable))
+  }
+}
+
+exports.command = 'slice <keyword>'
 exports.desc = 'get zhike slice info'
 
 exports.builder = function(yargs) {}
@@ -26,59 +80,60 @@ exports.handler = function(argv) {
   co(function*() {
     const { db } = yield components()
     const transcodeDb = yield db.load('db.transcode', 'transcode')
-    const { File, FileFormat, Format } = transcodeDb.models
-    const file = yield File.findOne({
-      raw: true,
-      where: {
-        id: argv.fileId
-      }
-    })
-    const versions = yield FileFormat.findAll({
-      raw: true,
-      where: {
-        fileId: argv.fileId
-      }
-    })
+    const { File } = transcodeDb.models
 
-    const versionsTable = []
-
-    for (let i = 0; i < versions.length; i++) {
-      const version = versions[i]
-      const format = yield Format.findOne({
-        where: {
-          id: version.formatId
-        }
-      })
-
-      let url
-      if (version.dest) {
-        if ([7, 8].indexOf(version.formatId) !== -1) {
-          url = `https://media7.smartstudy.com${JSON.parse(version.dest).cdn}/dest.mp4`
-        } else if ([1, 3].indexOf(version.formatId) !== -1) {
-          url = `https://media6.smartstudy.com${version.dest}/dest.mpd`
-        } else if ([2, 4, 5].indexOf(version.formatId) !== -1) {
-          url = `https://media6.smartstudy.com${version.dest}/dest.m3u8`
-        }
-      }
-
-      versionsTable.push([version.id, format.name, version.status ? '已完成' : '未完成', url])
+    const orConds = []
+    if (Utils._.isNaN(Number(argv.keyword))) {
+      orConds.push({ name: {
+        [Op.like]: `%${argv.keyword}%`
+      }})
+    } else {
+      orConds.push({ id: Number(argv.keyword) })
     }
 
-    const fileFormat = format(file)
-    console.log(Utils.chalk.cyan('Basic:'))
-    Utils.log({
-      id: file.id,
-      name: file.name,
-      fatherId: file.fatherId,
-      size: fileFormat.sizeText,
-      duration: `${file.duration / 60}分钟`,
-      tips: file.tips ? JSON.parse(file.tips) : {}
+    const files = yield File.findAll({
+      raw: true,
+      where: {
+        [Op.or]: orConds
+      },
+      limit: 10
     })
 
-    if (versionsTable.length > 0) {
-      console.log(Utils.chalk.cyan('Versions:'))
-      console.log(Utils.table(versionsTable))
+    if (files.length === 1) {
+      yield processSlice(files[0], transcodeDb.models)
+    } else {
+      const answers = yield inquirer
+        .prompt([
+          {
+            type: 'autocomplete',
+            name: 'selected',
+            message: `Please choose a file to continue:`,
+            source: (answers, input) => {
+              input = input || ''
+  
+              return new Promise(function(resolve) {
+                const fuzzyResult = fuzzy.filter(input, files.map(file => `[${file.id}]-${file.name}`))
+                resolve(
+                  fuzzyResult.map(function(el) {
+                    return el.original
+                  })
+                )
+              })
+            },
+            validate: function(answers) {
+              if (answers.length < 1) {
+                return 'Please choose at least one.'
+              }
+              return true
+            }
+          }
+        ])
+
+      const matched = /^\[(\d+)\]-/.exec(answers.selected)
+      const file = Utils._.find(files, { id: Number(matched[1]) })
+      yield processSlice(file, transcodeDb.models)
     }
+    
     process.exit(0)
   })
 }
