@@ -7,7 +7,7 @@ const { Utils } = require('zignis')
 const { components } = require('../../../')
 
 exports.command = 'login <userId>'
-exports.desc = 'way to login zhike'
+exports.desc = 'way to login zhike, <userId> could be user id, phone number or email'
 
 exports.builder = function(yargs) {}
 
@@ -35,6 +35,17 @@ exports.handler = function(argv) {
     const { db } = yield components()
     const userDatabase = yield db.load('db.user', 'user', db.associate(path.resolve(__dirname, '../../models/user')))
     const { Account, Profile } = userDatabase.models
+
+
+    const orConds = []
+    if (Utils._.isNaN(Number(argv.userId))) {
+      orConds.push({ email: `${argv.userId}`})
+    } else {
+      orConds.push({ id: Number(argv.userId) })
+      orConds.push({ phone: Number(argv.userId) })
+      orConds.push({ cellphone: `${argv.userId}` })
+    }
+
     const users = yield Account.findAll({
       raw: true,
       include: [
@@ -45,16 +56,15 @@ exports.handler = function(argv) {
         }
       ],
       where: {
-        [Op.or]: [{ id: argv.userId }, { phone: argv.userId }, { cellphone: `${argv.userId}` }],
+        [Op.or]: orConds,
         groupId: 1,
         status: 1
       },
       limit: 10
     })
 
-    if (!users) {
-      console.log('User not found')
-      return
+    if (!users || users.length === 0) {
+      Utils.error('User not found')
     }
 
     if (users.length === 1) {

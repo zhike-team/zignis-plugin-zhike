@@ -60,22 +60,15 @@ exports.handler = function(argv) {
 
     switch (ProductType) {
       case 'Product':
-        product.courses = JSON.parse(product.courses)
-        product.overview = JSON.parse(product.overview)
-        product.trailer = JSON.parse(product.trailer)
+        product.courses = product.courses && JSON.parse(product.courses)
+        product.overview = product.overview && JSON.parse(product.overview)
+        product.trailer = product.trailer && JSON.parse(product.trailer)
         break
       case 'CrmProduct':
         product.subTypeAddition = JSON.parse(product.subTypeAddition)
         break
     }
 
-    if (ProductType === 'Product') {
-      product.courses = JSON.parse(product.courses)
-      product.overview = JSON.parse(product.overview)
-      product.trailer = JSON.parse(product.trailer)
-    } else if (ProductType === 'CrmProduct') {
-      product.subTypeAddition = JSON.parse(product.subTypeAddition)
-    }
     Utils.log(product)
     process.exit(0)
   })
