@@ -355,6 +355,9 @@ exports.genMigrationForField = function*(table, field, sequelize, dbConfig, opti
 }
 
 exports.genFileSuffix = function(options) {
+  if (options.fileSuffix) {
+    return options.fileSuffix
+  }
   let locals = { tableName: options.tableName }
   let action = 'create'
   let entity = 'table ${tableName}'

@@ -18,6 +18,8 @@ exports.builder = function(yargs) {
   yargs.option('simulate', { default: false, describe: 'only output in stdout' })
   yargs.option('reverse', { default: false, describe: 'reverse up and down' })
   yargs.option('migration-dir', { default: false, describe: 'change migration dir' })
+
+  yargs.option('file-suffix', { default: false, describe: 'migration file suffix name, override the auto generated name' })
 }
 
 exports.handler = function(argv) {
