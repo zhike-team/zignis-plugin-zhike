@@ -74,7 +74,12 @@ const processSlice = function * (file, { FileFormat, Format }) {
 exports.command = 'slice <keyword>'
 exports.desc = 'get zhike slice info'
 
-exports.builder = function(yargs) {}
+exports.builder = function(yargs) {
+  yargs.option('fuzzy', {
+    default: false,
+    describe: 'match item in fuzzy mode'
+  })
+}
 
 exports.handler = function(argv) {
   co(function*() {
@@ -112,12 +117,11 @@ exports.handler = function(argv) {
               input = input || ''
   
               return new Promise(function(resolve) {
-                const fuzzyResult = fuzzy.filter(input, files.map(file => `[${file.id}]-${file.name}`))
-                resolve(
-                  fuzzyResult.map(function(el) {
-                    return el.original
-                  })
-                )
+                if (argv.fuzzy) {
+                  resolve(fuzzy.filter(input, files.map(file => `[${file.id}]-${file.name}`)).map(el => el.original))
+                } else {
+                  resolve(files.map(file => `[${file.id}]-${file.name}`).filter(item => item.toLowerCase().indexOf(input.toLowerCase()) > -1))
+                }
               })
             },
             validate: function(answers) {
