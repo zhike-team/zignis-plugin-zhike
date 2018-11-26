@@ -20,6 +20,7 @@ exports.builder = function(yargs) {
   yargs.option('migration-dir', { default: false, describe: 'change migration dir' })
 
   yargs.option('file-suffix', { default: false, describe: 'migration file suffix name, override the auto generated name' })
+  yargs.option('index', { default: false, describe: 'add index' })
 }
 
 exports.handler = function(argv) {

@@ -26,6 +26,8 @@ const CREATE_TABLE_TEMPLATE = `return queryInterface.createTable('%s', %s);` // 
 const DROP_TABLE_TEMPLATE = `return queryInterface.dropTable('%s');` // args: tablename
 const RENAME_TABLE_TEMPLATE = `return queryInterface.renameTable('%s', '%s')` // args: tablename before, tablename after
 const CREATE_FIELD_TEMPLATE = `return queryInterface.addColumn('%s', '%s', %s)` // args: tablename, fieldname, type
+const CREATE_FIELD_INDEX_TEMPLATE = `return queryInterface.addIndex('%s', '%s', %s)` // args: tablename, fieldname, type
+const REMOVE_FIELD_INDEX_TEMPLATE = `return queryInterface.removeIndex('%s', '%s', %s)` // args: tablename, fieldname, type
 const MODIFY_FIELD_TEMPLATE = `return queryInterface.changeColumn('%s', '%s', %s)` // args: tablename, fieldname, type
 const RENAME_FIELD_TEMPLATE = `return queryInterface.renameColumn('%s', '%s', '%s')` // args: tablename, fieldname before, field name after
 const DROP_FIELD_TEMPLATE = `return queryInterface.removeColumn('%s', '%s');` // args: tablename, fieldname
@@ -328,13 +330,13 @@ exports.genMigrationForField = function*(table, field, sequelize, dbConfig, opti
           Utils.error(`No such field: ${table}.${field} in options.attributes`)
         }
         attrStr = tosource(optionAttrs[field]).replace(/"(Sequelize(.*?))"/g, '$1')
-        up = util.format(CREATE_FIELD_TEMPLATE, table, field, attrStr)
-        down = util.format(DROP_FIELD_TEMPLATE, table, field)
+        up = util.format(options.index ? CREATE_FIELD_INDEX_TEMPLATE : CREATE_FIELD_TEMPLATE, table, field, attrStr)
+        down = util.format(options.index ? REMOVE_FIELD_INDEX_TEMPLATE : DROP_FIELD_TEMPLATE, table, field)
       } else {
         if (attrs[field]) {
           attrStr = tosource(attrs[field]).replace(/"(Sequelize(.*?))"/g, '$1')
-          up = util.format(CREATE_FIELD_TEMPLATE, table, field, attrStr)
-          down = util.format(DROP_FIELD_TEMPLATE, table, field)
+          up = util.format(options.index ? CREATE_FIELD_INDEX_TEMPLATE : CREATE_FIELD_TEMPLATE, table, field, attrStr)
+          down = util.format(options.index ? REMOVE_FIELD_INDEX_TEMPLATE : DROP_FIELD_TEMPLATE, table, field)
         } else {
           up = down = ''
         }
@@ -363,7 +365,8 @@ exports.genFileSuffix = function(options) {
   let entity = 'table ${tableName}'
   let to = ''
   if (options.fieldName) {
-    entity += ' field ${fieldName}'
+    action = 'add'
+    entity = 'field ${fieldName} for ' + entity
     locals.fieldName = options.fieldName
   }
 
@@ -375,6 +378,10 @@ exports.genFileSuffix = function(options) {
 
   if (options.modify) {
     action = 'modify'
+  }
+
+  if (options.index) {
+    action = 'add index'
   }
 
   return Utils._.template(`${action} ${entity} ${to}`)(locals)
