@@ -26,8 +26,8 @@ const CREATE_TABLE_TEMPLATE = `return queryInterface.createTable('%s', %s);` // 
 const DROP_TABLE_TEMPLATE = `return queryInterface.dropTable('%s');` // args: tablename
 const RENAME_TABLE_TEMPLATE = `return queryInterface.renameTable('%s', '%s')` // args: tablename before, tablename after
 const CREATE_FIELD_TEMPLATE = `return queryInterface.addColumn('%s', '%s', %s)` // args: tablename, fieldname, type
-const CREATE_FIELD_INDEX_TEMPLATE = `return queryInterface.addIndex('%s', '%s', %s)` // args: tablename, fieldname, type
-const REMOVE_FIELD_INDEX_TEMPLATE = `return queryInterface.removeIndex('%s', '%s', %s)` // args: tablename, fieldname, type
+const CREATE_FIELD_INDEX_TEMPLATE = `return queryInterface.addIndex('%s', ['%s'], {name: '%s', type: 'UNIQUE'})` // args: tablename, fieldname, index name
+const REMOVE_FIELD_INDEX_TEMPLATE = `return queryInterface.removeIndex('%s', '%s')` // args: tablename, fieldname, type
 const MODIFY_FIELD_TEMPLATE = `return queryInterface.changeColumn('%s', '%s', %s)` // args: tablename, fieldname, type
 const RENAME_FIELD_TEMPLATE = `return queryInterface.renameColumn('%s', '%s', '%s')` // args: tablename, fieldname before, field name after
 const DROP_FIELD_TEMPLATE = `return queryInterface.removeColumn('%s', '%s');` // args: tablename, fieldname
@@ -324,23 +324,31 @@ exports.genMigrationForField = function*(table, field, sequelize, dbConfig, opti
       up = util.format(MODIFY_FIELD_TEMPLATE, table, field, optionAttrStr)
       down = util.format(MODIFY_FIELD_TEMPLATE, table, field, attrStr)
     } else {
-      let attrStr
-      if (options.attributes) {
-        if (!optionAttrs || !optionAttrs[field]) {
-          Utils.error(`No such field: ${table}.${field} in options.attributes`)
-        }
-        attrStr = tosource(optionAttrs[field]).replace(/"(Sequelize(.*?))"/g, '$1')
-        up = util.format(options.index ? CREATE_FIELD_INDEX_TEMPLATE : CREATE_FIELD_TEMPLATE, table, field, attrStr)
-        down = util.format(options.index ? REMOVE_FIELD_INDEX_TEMPLATE : DROP_FIELD_TEMPLATE, table, field)
+      if (options.index) {
+        up = util.format(CREATE_FIELD_INDEX_TEMPLATE, table, field, `${table}_${field}`)
+        down = util.format(REMOVE_FIELD_INDEX_TEMPLATE, table, `${table}_${field}`)
       } else {
-        if (attrs[field]) {
-          attrStr = tosource(attrs[field]).replace(/"(Sequelize(.*?))"/g, '$1')
-          up = util.format(options.index ? CREATE_FIELD_INDEX_TEMPLATE : CREATE_FIELD_TEMPLATE, table, field, attrStr)
-          down = util.format(options.index ? REMOVE_FIELD_INDEX_TEMPLATE : DROP_FIELD_TEMPLATE, table, field)
+        let attrStr
+        if (options.attributes) {
+          if (!optionAttrs || !optionAttrs[field]) {
+            Utils.error(`No such field: ${table}.${field} in options.attributes`)
+          }
+          attrStr = tosource(optionAttrs[field]).replace(/"(Sequelize(.*?))"/g, '$1')
+          
+          up = util.format(CREATE_FIELD_TEMPLATE, table, field, attrStr)
+          down = util.format(DROP_FIELD_TEMPLATE, table, field)
         } else {
-          up = down = ''
+          if (attrs[field]) {
+            attrStr = tosource(attrs[field]).replace(/"(Sequelize(.*?))"/g, '$1')
+            up = util.format(CREATE_FIELD_TEMPLATE, table, field, attrStr)
+            down = util.format(DROP_FIELD_TEMPLATE, table, field)
+          } else {
+            up = down = ''
+          }
         }
       }
+
+      
     }
   }
 

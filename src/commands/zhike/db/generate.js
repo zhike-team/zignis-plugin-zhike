@@ -2,12 +2,12 @@ const co = require('co')
 const fs = require('fs')
 const path = require('path')
 const { Utils } = require('zignis')
-const { components } = require('../../../../')
+const { components } = require('../../../..')
 const migration = require('../../../common/migration')
 
-exports.command = 'migrate <dbKey> <tableName> [fieldName]'
-exports.desc = 'db migrate tool'
-exports.aliases = 'migration'
+exports.command = 'generate <dbKey> <tableName> [fieldName]'
+exports.desc = 'db migration generator'
+exports.aliases = ['gen', 'create']
 
 exports.builder = function(yargs) {
   yargs.option('attributes', { default: false, describe: 'define attributes for table/field' })

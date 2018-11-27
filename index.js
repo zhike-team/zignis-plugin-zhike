@@ -66,7 +66,7 @@ const consulObject = {
 module.exports = {
   *repl() {
     const redis = yield getRedis()
-    const db = new DatabaseLoader()
+    const db = new DatabaseLoader({ readonly: true })
     return {
       zhike: {
         db,

@@ -8,7 +8,8 @@ const fs = require('fs')
 class DatabaseLoader {
   constructor(options) {
     this.options = Object.assign({}, {
-      loadReturnInstance: false
+      loadReturnInstance: false,
+      readonly: false
     }, options)
     this.instances = {}
   }
@@ -72,6 +73,10 @@ class DatabaseLoader {
       sequelize.dropAllSchemas = forbiddenMethod // 删除所有的 postgres schema，即删掉整个数据库
       sequelize.dropSchema = forbiddenMethod // 删除一个 postgres schema，一般也相当于删掉整个数据库
 
+      if (this.options.readonly && process.env.NODE_ENV === 'production') {
+        sequelize.query = forbiddenMethod
+      }
+
       yield sequelize.authenticate()
 
       that.instances[instanceKey] = sequelize
@@ -122,6 +127,21 @@ class DatabaseLoader {
 
           let model = sequelize.define(modelNameUpper, newTableInfo, options)
           model.drop = forbiddenMethod // 以防误删表
+          model.sync = forbiddenMethod
+
+          if (this.options.readonly && process.env.NODE_ENV === 'production') {
+            model.upsert = forbiddenMethod
+            model.truncate = forbiddenMethod
+            model.destroy = forbiddenMethod
+            model.restore = forbiddenMethod
+            model.update = forbiddenMethod
+            model.create = forbiddenMethod
+            model.findOrCreate = forbiddenMethod
+            model.findCreatefFnd = forbiddenMethod
+            model.bulkCreate = forbiddenMethod
+            model.removeAttribute = forbiddenMethod
+          }
+
         } catch (e) {}
       })
 
