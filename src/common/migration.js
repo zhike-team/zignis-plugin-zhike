@@ -22,6 +22,21 @@ module.exports = {
 };
 `
 
+const TYPESCRIPT_MIGRATION_TEMPLATE =
+  // args: up & down
+  `'use strict';
+
+module.exports = {
+  up: function (queryInterface: any, Sequelize: any) {
+    %s
+  },
+
+  down: function (queryInterface: any, Sequelize: any) {
+    %s
+  }
+};
+`
+
 const CREATE_TABLE_TEMPLATE = `return queryInterface.createTable('%s', %s);` // args: tablename & attrs
 const DROP_TABLE_TEMPLATE = `return queryInterface.dropTable('%s');` // args: tablename
 const RENAME_TABLE_TEMPLATE = `return queryInterface.renameTable('%s', '%s')` // args: tablename before, tablename after
@@ -298,7 +313,8 @@ exports.genMigrationForTable = function*(table, sequelize, dbConfig, options) {
   if (options.onlyUp) {
     down = ''
   }
-  const migration = beautify(util.format(MIGRATION_TEMPLATE, up, down), { indent_size: 2 })
+  const template = options.typescript ? TYPESCRIPT_MIGRATION_TEMPLATE : MIGRATION_TEMPLATE
+  const migration = beautify(util.format(template, up, down), { indent_size: 2 })
   return migration
 }
 
@@ -360,7 +376,8 @@ exports.genMigrationForField = function*(table, field, sequelize, dbConfig, opti
     down = ''
   }
 
-  const migration = beautify(util.format(MIGRATION_TEMPLATE, up, down), { indent_size: 2 })
+  const template = options.typescript ? TYPESCRIPT_MIGRATION_TEMPLATE : MIGRATION_TEMPLATE
+  const migration = beautify(util.format(template, up, down), { indent_size: 2 })
   return migration
 }
 

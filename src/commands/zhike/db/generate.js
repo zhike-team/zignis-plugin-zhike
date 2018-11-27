@@ -21,6 +21,8 @@ exports.builder = function(yargs) {
 
   yargs.option('file-suffix', { default: false, describe: 'migration file suffix name, override the auto generated name' })
   yargs.option('index', { default: false, describe: 'add index' })
+
+  yargs.option('typescript', { default: false, describe: 'typescript format migration file', alias: 'ts' })
 }
 
 exports.handler = function(argv) {
@@ -53,7 +55,7 @@ exports.handler = function(argv) {
 
       const fileName = migration.genFileSuffix(argv)
       const filePrefix = Utils.day().format('YYYYMMDDHHmmssSSS')
-      const migrationFile = path.resolve(argv.migrationDir, `${filePrefix}_${Utils._.kebabCase(fileName)}.js`)
+      const migrationFile = path.resolve(argv.migrationDir, `${filePrefix}_${Utils._.kebabCase(fileName)}.${argv.typescript ? 'ts' : 'js'}`)
       if (fs.existsSync(migrationFile)) {
         Utils.error('File exist!')
       }
