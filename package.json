@@ -22,6 +22,7 @@
     "lodash": "^4.17.10",
     "mysql2": "^1.6.1",
     "node-cron": "^2.0.3",
+    "node-sqlparser": "^1.0.4",
     "pg": "^7.5.0",
     "pg-hstore": "^2.3.2",
     "sequelize": "^4.41.0",
@@ -31,6 +32,6 @@
     "zhike-consul": "^1.0.12"
   },
   "peerDependencies": {
-    "zignis": "^1.0.33"
+    "zignis": "^1.0.42"
   }
 }

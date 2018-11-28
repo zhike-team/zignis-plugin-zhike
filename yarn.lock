@@ -831,6 +831,10 @@ node-cron@^2.0.3:
     opencollective-postinstall "^2.0.0"
     tz-offset "0.0.1"
 
+node-sqlparser@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/node-sqlparser/-/node-sqlparser-1.0.4.tgz#1b97bef90f5ad7276de709c5c0bd3f47582049a7"
+
 nopt@~4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/nopt/-/nopt-4.0.1.tgz#d0d4685afd5415193c8c7505602d0d17cd64474d"
@@ -1491,9 +1495,9 @@ zhike-consul@^1.0.12:
     bluebird "^3.4.6"
     consul "^0.27.0"
 
-zignis@^1.0.33:
-  version "1.0.33"
-  resolved "https://registry.yarnpkg.com/zignis/-/zignis-1.0.33.tgz#550aeb237c2f2b34c2d275ec70dc835e73455ce9"
+zignis@^1.0.42:
+  version "1.0.42"
+  resolved "https://registry.yarnpkg.com/zignis/-/zignis-1.0.42.tgz#c581183472f9f0ea22145cac24e6736afef73fa4"
   dependencies:
     chalk "^2.4.1"
     co "^4.6.0"

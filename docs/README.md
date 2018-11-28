@@ -122,13 +122,14 @@ db 命令提供了几个和数据库相关的子命令，提供了一些常用�
 ```
 db list|ls <dbKey> 列出某一个数据库所有的表名
 db describe|desc <dbKey> <tableName> 显示某个数据库中的某个表的字段结构定义
-db migrate|migration <dbKey> <tableName> [fieldName] 可以自动生成基本的migration文件结构
+db generate|gen|create <dbKey> <tableName> [fieldName] 可以自动生成基本的migration文件结构
+db query <dbKey> <sql> 执行 SELECT SQL 语句
 ```
 
 db migration 子命令的选项比较多，所以这里要列一下：
 
 ```
-zignis zhike db migrate <dbKey> <tableName> [fieldName]
+zignis zhike db generate <dbKey> <tableName> [fieldName]
 
 db migrate tool
 
@@ -140,7 +141,9 @@ db migrate tool
   --simulate                 only output in stdout               [默认值: false]
   --reverse                  reverse up and down                 [默认值: false]
   --migration-dir            change migration dir                [默认值: false]
-  --disable-ten-temporarily                                      [默认值: false]
+  --file-suffix                migration file suffix name, override the auto generated name                      [默认值: false]
+  --index                    add index                           [默认值: false]
+  --typescript, --ts         typescript format migration file    [默认值: false]
 ```
 
 可能的 attributes 写法:
