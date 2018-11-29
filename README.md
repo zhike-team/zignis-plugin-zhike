@@ -2,7 +2,7 @@
 
 It's a plugin of Zignis for Zhike(SmartStudy). It includes the integrations of our technical infrastructions, and commands to do the quite often jobs, tools to extend more. At the same time, it's a good example to show how to develop a Zignis plugin.
 
-**It's is customized for company Zhike, can not be used elsewhere.**
+**It's customized for just company Zhike internal use, it can not be used elsewhere.**
 
 ## Features
 
