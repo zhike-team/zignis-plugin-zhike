@@ -2,7 +2,6 @@ const fs = require('fs')
 const path = require('path')
 const { Utils } = require('zignis')
 const _ = require('lodash')
-const dayjs = require('dayjs')
 
 exports.command = 'cron [name]'
 exports.desc = 'Create a zignis cron job file'
@@ -18,7 +17,7 @@ exports.handler = function(argv) {
     return
   }
 
-  const filePrefix = dayjs().format('YYYYMMDDHHmmssSSS')
+  const filePrefix = Utils.day().format('YYYYMMDDHHmmssSSS')
   const cronFile = path.resolve(argv.cronDir, `${filePrefix}_${_.kebabCase(argv.name)}.js`)
   if (fs.existsSync(cronFile)) {
     console.log(Utils.chalk.red('Scritp file exist!'))
