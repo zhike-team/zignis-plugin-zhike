@@ -7,7 +7,7 @@ const migration = require('../../../common/migration')
 
 exports.command = 'generate <dbKey> <tableName> [fieldName]'
 exports.desc = 'db migration generator'
-exports.aliases = ['g', 'gen', 'create']
+exports.aliases = ['g', 'create']
 
 exports.builder = function(yargs) {
   yargs.option('attributes', { default: false, describe: 'define attributes for table/field' })

@@ -4,7 +4,7 @@ const { Utils } = require('zignis')
 const _ = require('lodash')
 
 exports.command = 'cron [name]'
-exports.desc = 'Create a zignis cron job file'
+exports.desc = 'Generate a zignis cron job file'
 // exports.alias = ''
 
 exports.builder = function(yargs) {
