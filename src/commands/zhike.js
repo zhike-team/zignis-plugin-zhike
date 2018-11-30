@@ -1,5 +1,5 @@
 exports.command = 'zhike'
-exports.desc = 'zhike related commands'
+exports.desc = 'Zhike related commands'
 
 exports.builder = function(yargs) {
   yargs.commandDir('zhike')
