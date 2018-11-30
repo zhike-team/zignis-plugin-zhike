@@ -37,8 +37,6 @@ exports.handler = function (argv) {
       Utils.error(e.message)
     }
 
-    const sql = stringify(ast, { offset: false })
-
     if (ast.limit) {
       if (ast.limit[1].value > MAX_SELECT_ROWS) {
         Utils.error('Your query limitation must be less than 1000!')
@@ -50,7 +48,8 @@ exports.handler = function (argv) {
     } else {
       ast.limit = [{"type": "number", "value": 0}, {"type": "number", "value": "10"}]
     }
-
+    
+    const sql = stringify(ast, { offset: false })
     const results = yield dbInstance.query(sql, {
       type: dbInstance.QueryTypes.SELECT
     })
