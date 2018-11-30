@@ -94,7 +94,7 @@ const getPostgresFieldsCommentContent = function*(db, tableName) {
 
 exports.command = 'describe <dbKey> <tableName>'
 exports.desc = 'db table describe, tableName could be without prefix'
-exports.aliases = 'desc'
+exports.aliases = ['d', 'desc']
 
 exports.builder = function(yargs) {
   yargs.option('quiet', { default: false, describe: 'Only show field name', alias: 'q' })

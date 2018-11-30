@@ -4,7 +4,7 @@ const { components } = require('../../../../')
 
 exports.command = 'list <dbKey>'
 exports.desc = 'list all table of specific database'
-exports.aliases = 'ls'
+exports.aliases = ['l', 'ls']
 
 exports.builder = function(yargs) {}
 

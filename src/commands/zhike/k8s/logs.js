@@ -19,7 +19,7 @@ const filterContain = (list, keyword) => list.filter(item => item.indexOf(keywor
 
 exports.command = 'logs [keyword]'
 exports.desc = `k8s logs pods`
-exports.aliases = ['log']
+exports.aliases = ['log', 'l']
 
 exports.builder = function(yargs) {}
 

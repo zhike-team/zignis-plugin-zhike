@@ -9,6 +9,7 @@ const MAX_SELECT_ROWS = 1000
 
 exports.command = 'query <dbKey> <sql>'
 exports.desc = 'execute SQL'
+exports.aliases = ['q']
 
 exports.builder = function (yargs) {
   yargs.option('fields', { default: false, describe: 'pick fields from query results' })

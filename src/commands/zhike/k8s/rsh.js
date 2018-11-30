@@ -20,7 +20,7 @@ const filterContain = (list, keyword) => list.filter(item => item.indexOf(keywor
 
 exports.command = 'rsh [keyword]'
 exports.desc = `k8s rsh pod`
-exports.aliases = ['bash', 'exec']
+exports.aliases = ['bash', 'exec', 'sh']
 
 exports.builder = function(yargs) {}
 
