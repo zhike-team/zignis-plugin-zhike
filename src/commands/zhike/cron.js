@@ -61,16 +61,18 @@ exports.handler = function(argv) {
   const config = Utils.getCombinedConfig()
   co(function*() {
     // run specific job for testing, ignore disabled property
-    if (argv.job && fs.existsSync(path.resolve(process.cwd(), argv.job))) {
-      const jobModule = require(path.resolve(process.cwd(), argv.job))
-      if (jobModule && jobModule.actions && Utils._.isArray(jobModule.actions)) {
-        yield shell.series(jobModule.actions)
-        process.exit(0)
+    if (argv.job) {
+      if (fs.existsSync(path.resolve(process.cwd(), argv.job))) {
+        const jobModule = require(path.resolve(process.cwd(), argv.job))
+        if (jobModule && jobModule.actions && Utils._.isArray(jobModule.actions)) {
+          yield shell.series(jobModule.actions)
+          process.exit(0)
+        } else {
+          Utils.error('Job not valid')
+        }
       } else {
-        Utils.error('Job not valid')
+        Utils.error('Job not found')
       }
-    } else {
-      Utils.error('Job not found')
     }
 
     const { redis } = yield components()
@@ -130,8 +132,9 @@ exports.handler = function(argv) {
         })
       })
     } else {
-      console.log(Utils.chalk.red('No enabled cronjob found'))
-      process.exit(1)
+      Utils.error('No enabled cronjob found')
     }
+  }).catch(function(e) {
+    Utils.error(e.stack)
   })
 }
