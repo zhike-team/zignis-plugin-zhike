@@ -29,6 +29,7 @@
     "shelljs": "^0.8.2",
     "thunkify-wrap": "^1.0.4",
     "tosource": "^1.0.0",
+    "util.promisify": "^1.0.0",
     "zhike-consul": "^1.0.12"
   },
   "peerDependencies": {
