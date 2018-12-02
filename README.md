@@ -7,16 +7,19 @@
 ```
 zignis zhike
 
-zhike related commands
+Zhike related commands
 
 命令：
-  zignis zhike consul [keys..]          zhike consul config review [aliases: config]
-  zignis zhike k8s <op> [keyword]       zhike k8s tools [aliases: kubectl, docker, pod]
-  zignis zhike login <userId>           way to login zhike
-  zignis zhike order <orderId>          get order info
-  zignis zhike product <productId>      get product info
-  zignis zhike redis cmd [arguments..]  zhike redis tool, use ioredis [aliases: cache]
-  zignis zhike slice <fileId>           get zhike slice info
+  zignis zhike consul [keys..]          zhike consul config review                                     [aliases: config]
+  zignis zhike cron [job]               zhike cron system
+  zignis zhike db <op>                  zhike db tools                                               [aliases: database]
+  zignis zhike k8s <op> [keyword]       zhike k8s tools                                               [aliases: kubectl]
+  zignis zhike login <userId>           way to login zhike, <userId> could be user id, phone number or email
+  zignis zhike order <orderId>          get zhike order info
+  zignis zhike pid <pid>                zhike pid info
+  zignis zhike product <productId>      get zhike product info
+  zignis zhike redis cmd [arguments..]  zhike redis tools                                               [aliases: cache]
+  zignis zhike slice <keyword>          get zhike slice info
   zignis zhike word [word]              personal word test
 ```
 
@@ -61,6 +64,10 @@ product 命令用于查看商品 参数是商品 ID，可以查看各种商品�
 **zignis zhike slice**
 
 slice 命令用于查看智课视频切片相关信息
+
+**zignis zhike pid**
+
+pid 命令用于查看 Zhike pid 的详细信息
 
 **zignis zhike word**
 
