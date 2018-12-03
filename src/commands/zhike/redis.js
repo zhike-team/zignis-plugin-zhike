@@ -39,8 +39,12 @@ exports.handler = function(argv) {
       } else {
         Utils.log(ret)
       }
+
+      process.exit(0)
     }
 
     return ret
+  }).catch(e => {
+    Utils.error(e.stack)
   })
 }

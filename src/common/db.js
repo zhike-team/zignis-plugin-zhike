@@ -5,12 +5,18 @@ const _ = require('lodash')
 const co = require('co')
 const fs = require('fs')
 
+const { Utils } = require('zignis')
+
 class DatabaseLoader {
   constructor(options) {
-    this.options = Object.assign({}, {
-      loadReturnInstance: false,
-      readonly: false
-    }, options)
+    this.options = Object.assign(
+      {},
+      {
+        loadReturnInstance: false,
+        readonly: false
+      },
+      options
+    )
     this.instances = {}
   }
 
@@ -20,9 +26,9 @@ class DatabaseLoader {
 
   load(consulKey, instanceKey = '', callback) {
     let that = this
-    return co(function* () {
+    return co(function*() {
       instanceKey = instanceKey || consulKey
-      
+
       // init db only once
       if (that.instances[instanceKey]) {
         return that.instances[instanceKey]
@@ -141,7 +147,6 @@ class DatabaseLoader {
             model.bulkCreate = forbiddenMethod
             model.removeAttribute = forbiddenMethod
           }
-
         } catch (e) {}
       })
 
@@ -152,12 +157,14 @@ class DatabaseLoader {
       if (that.options.loadReturnInstance) {
         return that.instances[instanceKey]
       }
+    }).catch(e => {
+      Utils.error(e.stack)
     })
   }
 
   associate(modelPath) {
     return function(sequelize) {
-      Object.keys(sequelize.models).forEach((modelName) => {
+      Object.keys(sequelize.models).forEach(modelName => {
         if (fs.existsSync(`${modelPath}/${modelName}.js`)) {
           let model = sequelize.models[modelName]
           require(`${modelPath}/${modelName}`).bind(model)(sequelize.models)

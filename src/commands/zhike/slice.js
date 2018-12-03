@@ -22,7 +22,7 @@ const format = function(file) {
   return file
 }
 
-const processSlice = function * (file, { FileFormat, Format }) {
+const processSlice = function*(file, { FileFormat, Format }) {
   const versions = yield FileFormat.findAll({
     raw: true,
     where: {
@@ -89,9 +89,11 @@ exports.handler = function(argv) {
 
     const orConds = []
     if (Utils._.isNaN(Number(argv.keyword))) {
-      orConds.push({ name: {
-        [Op.like]: `%${argv.keyword}%`
-      }})
+      orConds.push({
+        name: {
+          [Op.like]: `%${argv.keyword}%`
+        }
+      })
     } else {
       orConds.push({ id: Number(argv.keyword) })
     }
@@ -107,37 +109,42 @@ exports.handler = function(argv) {
     if (files.length === 1) {
       yield processSlice(files[0], transcodeDb.models)
     } else {
-      const answers = yield inquirer
-        .prompt([
-          {
-            type: 'autocomplete',
-            name: 'selected',
-            message: `Please choose a file to continue:`,
-            source: (answers, input) => {
-              input = input || ''
-  
-              return new Promise(function(resolve) {
-                if (argv.fuzzy) {
-                  resolve(fuzzy.filter(input, files.map(file => `[${file.id}]-${file.name}`)).map(el => el.original))
-                } else {
-                  resolve(files.map(file => `[${file.id}]-${file.name}`).filter(item => item.toLowerCase().indexOf(input.toLowerCase()) > -1))
-                }
-              })
-            },
-            validate: function(answers) {
-              if (answers.length < 1) {
-                return 'Please choose at least one.'
+      const answers = yield inquirer.prompt([
+        {
+          type: 'autocomplete',
+          name: 'selected',
+          message: `Please choose a file to continue:`,
+          source: (answers, input) => {
+            input = input || ''
+
+            return new Promise(function(resolve) {
+              if (argv.fuzzy) {
+                resolve(fuzzy.filter(input, files.map(file => `[${file.id}]-${file.name}`)).map(el => el.original))
+              } else {
+                resolve(
+                  files
+                    .map(file => `[${file.id}]-${file.name}`)
+                    .filter(item => item.toLowerCase().indexOf(input.toLowerCase()) > -1)
+                )
               }
-              return true
+            })
+          },
+          validate: function(answers) {
+            if (answers.length < 1) {
+              return 'Please choose at least one.'
             }
+            return true
           }
-        ])
+        }
+      ])
 
       const matched = /^\[(\d+)\]-/.exec(answers.selected)
       const file = Utils._.find(files, { id: Number(matched[1]) })
       yield processSlice(file, transcodeDb.models)
     }
-    
+
     process.exit(0)
+  }).catch(e => {
+    Utils.error(e.stack)
   })
 }

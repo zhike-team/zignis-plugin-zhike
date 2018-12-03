@@ -19,7 +19,10 @@ exports.builder = function(yargs) {
   yargs.option('reverse', { default: false, describe: 'reverse up and down' })
   yargs.option('migration-dir', { default: false, describe: 'change migration dir' })
 
-  yargs.option('file-suffix', { default: false, describe: 'migration file suffix name, override the auto generated name' })
+  yargs.option('file-suffix', {
+    default: false,
+    describe: 'migration file suffix name, override the auto generated name'
+  })
   yargs.option('index', { default: false, describe: 'add index' })
 
   yargs.option('typescript', { default: false, describe: 'typescript format migration file', alias: 'ts' })
@@ -45,7 +48,7 @@ exports.handler = function(argv) {
     } else {
       ret = yield migration.genMigrationForTable(tableName, dbInstance, dbConfig, argv)
     }
-    
+
     if (argv.simulate) {
       console.log(ret)
     } else {
@@ -55,7 +58,10 @@ exports.handler = function(argv) {
 
       const fileName = migration.genFileSuffix(argv)
       const filePrefix = Utils.day().format('YYYYMMDDHHmmssSSS')
-      const migrationFile = path.resolve(argv.migrationDir, `${filePrefix}_${Utils._.kebabCase(fileName)}.${argv.typescript ? 'ts' : 'js'}`)
+      const migrationFile = path.resolve(
+        argv.migrationDir,
+        `${filePrefix}_${Utils._.kebabCase(fileName)}.${argv.typescript ? 'ts' : 'js'}`
+      )
       if (fs.existsSync(migrationFile)) {
         Utils.error('File exist!')
       }
@@ -67,5 +73,7 @@ exports.handler = function(argv) {
     }
 
     process.exit(0)
+  }).catch(e => {
+    Utils.error(e.stack)
   })
 }

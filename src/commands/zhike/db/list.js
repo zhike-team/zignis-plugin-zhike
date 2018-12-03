@@ -25,5 +25,7 @@ exports.handler = function(argv) {
       console.log(table)
     })
     process.exit(0)
+  }).catch(e => {
+    Utils.error(e.stack)
   })
 }

@@ -17,7 +17,7 @@ exports.builder = function(yargs) {
     describe: 'k8s kubectl absolute path'
   })
 
-  yargs.commandDir('k8s')
+  Utils.extendSubCommand('zhike/k8s', 'zignis-plugin-zhike', yargs, __dirname)
 }
 
 exports.handler = function(argv) {}

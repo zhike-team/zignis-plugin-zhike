@@ -1,3 +1,4 @@
+const { Utils } = require('zignis')
 const { Kubectl } = require('../../../common/kubectl')
 const fs = require('fs')
 const co = require('co')
@@ -65,5 +66,7 @@ exports.handler = function(argv) {
     filteredPods.forEach(pod => {
       console.log(pod)
     })
+  }).catch(e => {
+    Utils.error(e.stack)
   })
 }

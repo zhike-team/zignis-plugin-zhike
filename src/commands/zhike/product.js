@@ -71,5 +71,7 @@ exports.handler = function(argv) {
 
     Utils.log(product)
     process.exit(0)
+  }).catch(e => {
+    Utils.error(e.stack)
   })
 }

@@ -55,5 +55,7 @@ exports.handler = function(argv) {
     } else {
       return { result: pickNeededFromPull, zhikeConsul: consul, env }
     }
+  }).catch(e => {
+    Utils.error(e.stack)
   })
 }

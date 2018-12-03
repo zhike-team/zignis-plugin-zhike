@@ -59,5 +59,7 @@ exports.handler = function(argv) {
     Utils.log(orderPayments)
 
     process.exit(0)
+  }).catch(e => {
+    Utils.error(e.stack)
   })
 }

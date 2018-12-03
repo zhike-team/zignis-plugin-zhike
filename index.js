@@ -30,6 +30,8 @@ const consulObject = {
       const { result } = yield consulCommand.handler({ keys, silent: true })
 
       return result
+    }).catch(e => {
+      throw new Error(e.stack)
     })
   },
 
@@ -60,6 +62,8 @@ const consulObject = {
       keys.map(watch)
 
       return result
+    }).catch(e => {
+      throw new Error(e.stack)
     })
   }
 }
@@ -147,6 +151,8 @@ module.exports = {
         consul: consulObject,
         config: consulObject
       }
+    }).catch(e => {
+      throw new Error(e.stack)
     })
   }
 }

@@ -36,10 +36,9 @@ exports.handler = function(argv) {
     const userDatabase = yield db.load('db.user', 'user', db.associate(path.resolve(__dirname, '../../models/user')))
     const { Account, Profile } = userDatabase.models
 
-
     const orConds = []
     if (Utils._.isNaN(Number(argv.userId))) {
-      orConds.push({ email: `${argv.userId}`})
+      orConds.push({ email: `${argv.userId}` })
     } else {
       orConds.push({ id: Number(argv.userId) })
       orConds.push({ phone: Number(argv.userId) })
@@ -94,5 +93,7 @@ exports.handler = function(argv) {
           console.log(e.stack)
         })
     }
+  }).catch(e => {
+    Utils.error(e.stack)
   })
 }

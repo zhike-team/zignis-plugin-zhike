@@ -164,5 +164,7 @@ exports.handler = function(argv) {
 
       console.log('')
     }
+  }).catch(e => {
+    Utils.error(e.stack)
   })
 }

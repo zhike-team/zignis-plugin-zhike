@@ -158,5 +158,7 @@ exports.handler = function(argv) {
     }
 
     process.exit(0)
+  }).catch(e => {
+    Utils.error(e.stack)
   })
 }
