@@ -79,10 +79,6 @@ class DatabaseLoader {
       sequelize.dropAllSchemas = forbiddenMethod // 删除所有的 postgres schema，即删掉整个数据库
       sequelize.dropSchema = forbiddenMethod // 删除一个 postgres schema，一般也相当于删掉整个数据库
 
-      if (that.options.readonly || process.env.NODE_ENV === 'production') {
-        sequelize.query = forbiddenMethod
-      }
-
       yield sequelize.authenticate()
 
       that.instances[instanceKey] = sequelize
@@ -135,7 +131,7 @@ class DatabaseLoader {
           model.drop = forbiddenMethod // 以防误删表
           model.sync = forbiddenMethod
 
-          if (that.options.readonly || process.env.NODE_ENV === 'production') {
+          if (that.options.readonly && process.env.NODE_ENV === 'production') {
             model.upsert = forbiddenMethod
             model.truncate = forbiddenMethod
             model.destroy = forbiddenMethod
