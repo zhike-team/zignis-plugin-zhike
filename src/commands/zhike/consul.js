@@ -34,8 +34,7 @@ exports.handler = function(argv) {
       keysPrefix.push(key.split('.')[0])
     })
 
-    delete global.CFG
-    const consul = new Consul(keysPrefix, consulConfig[env].host, consulConfig[env].port, global, {
+    const consul = new Consul(keysPrefix, consulConfig[env].host, consulConfig[env].port, {}, {
       output: false,
       timeout: 5000
     })

@@ -23,8 +23,7 @@ exports.handler = function(argv) {
   return co(function*() {
     const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
 
-    delete global.CFG
-    const consul = new Consul(['redis'], consulConfig[env].host, consulConfig[env].port, global, {
+    const consul = new Consul(['redis'], consulConfig[env].host, consulConfig[env].port, {}, {
       output: false,
       timeout: 5000
     })
