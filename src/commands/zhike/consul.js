@@ -4,6 +4,9 @@ const Consul = require('zhike-consul')
 const consulConfig = require('../../../consul.json')
 const { Utils } = require('zignis')
 
+const isReachable = require('is-reachable')
+const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
+
 exports.command = 'consul [keys..]'
 exports.desc = 'zhike consul config review'
 exports.aliases = 'config'
@@ -23,10 +26,13 @@ exports.builder = function(yargs) {
 
 exports.handler = function(argv) {
   return co(function*() {
-    const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
     if (!argv.keys) {
-      console.log(Utils.chalk.red('Please provide at least 1 key'))
-      return
+      Utils.error('Please provide at least 1 key')
+    }
+
+    const checkReachable = yield isReachable(`${consulConfig[env].host}:${consulConfig[env].port}`)
+    if (!checkReachable) {
+      Utils.error('Consul host not reachable!')
     }
 
     const keysPrefix = []
@@ -34,10 +40,16 @@ exports.handler = function(argv) {
       keysPrefix.push(key.split('.')[0])
     })
 
-    const consul = new Consul(keysPrefix, consulConfig[env].host, consulConfig[env].port, {}, {
-      output: false,
-      timeout: 5000
-    })
+    const consul = new Consul(
+      keysPrefix,
+      consulConfig[env].host,
+      consulConfig[env].port,
+      {},
+      {
+        output: false,
+        timeout: 5000
+      }
+    )
     const data = yield consul.pull(env)
 
     const pickNeededFromPull = {}

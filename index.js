@@ -1,5 +1,3 @@
-const Consul = require('zhike-consul')
-const consulConfig = require('./consul.json')
 const Redis = require('ioredis')
 const consulCommand = require('./src/commands/zhike/consul')
 const DatabaseLoader = require('./src/common/db')
@@ -7,22 +5,7 @@ const co = require('co')
 const { Utils } = require('zignis')
 const debug = require('debug')('zignis-plugin-zhike:index')
 
-const getRedis = function() {
-  const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
-
-  const consul = new Consul(['redis'], consulConfig[env].host, consulConfig[env].port, {}, {
-    output: false,
-    timeout: 5000
-  })
-
-  return consul.pull(env).then(function(data) {
-    const config = data.CFG
-    const redis = new Redis(config.redis)
-    return redis
-  })
-}
-
-const consulObject = {
+const config = {
   get(keys) {
     return co(function*() {
       keys = Array.isArray(keys) ? keys : Utils.splitComma(keys)
@@ -91,7 +74,8 @@ module.exports = {
    * @returns {object} Zhike resources, for now include consul, redis, db.
    */
   *repl() {
-    const redis = yield getRedis()
+    const { redis: redisConfig } = yield config.get('redis')
+    const redis = new Redis(redisConfig)
     const db = new DatabaseLoader({ readonly: true })
     return {
       zhike: {
@@ -99,8 +83,8 @@ module.exports = {
         database: db,
         redis,
         cache: redis,
-        consul: consulObject,
-        config: consulObject
+        config,
+        consul: config
       }
     }
   },
@@ -140,15 +124,16 @@ module.exports = {
    */
   components: () => {
     return co(function*() {
-      const redis = yield getRedis()
+      const { redis: redisConfig } = yield config.get('redis')
+      const redis = new Redis(redisConfig)
       const db = new DatabaseLoader({ loadReturnInstance: true })
       return {
         db,
         database: db,
         redis,
         cache: redis,
-        consul: consulObject,
-        config: consulObject
+        config,
+        consul: config
       }
     }).catch(e => {
       throw new Error(e.stack)

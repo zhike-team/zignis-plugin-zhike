@@ -23,10 +23,16 @@ exports.handler = function(argv) {
   return co(function*() {
     const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
 
-    const consul = new Consul(['redis'], consulConfig[env].host, consulConfig[env].port, {}, {
-      output: false,
-      timeout: 5000
-    })
+    const consul = new Consul(
+      ['redis'],
+      consulConfig[env].host,
+      consulConfig[env].port,
+      {},
+      {
+        output: false,
+        timeout: 5000
+      }
+    )
     const data = yield consul.pull(env)
     const config = data.CFG
     const cache = new Redis(config.redis)
