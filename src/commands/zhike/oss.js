@@ -2,7 +2,7 @@
 const { Utils } = require('zignis')
 
 exports.command = 'oss'
-exports.desc = 'oss tools'
+exports.desc = 'zhike oss tools'
 // exports.aliases = ''
 
 exports.builder = function (yargs) {

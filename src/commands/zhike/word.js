@@ -53,7 +53,7 @@ const getRandomQustion = function*(models) {
 }
 
 exports.command = 'word [word]'
-exports.desc = 'personal word test'
+exports.desc = 'zhike personal word test'
 // exports.alias = ''
 
 exports.builder = function(yargs) {
