@@ -26,7 +26,7 @@ exports.handler = function (argv) {
       endpoint: oss.endpoint,
       bucket: oss.bucket,
 
-    });
+    })
 
     let result
     let pages = Math.max(1, argv.pages)

@@ -22,7 +22,7 @@ exports.handler = function (argv) {
       accessKeySecret: oss.secret,
       endpoint: oss.endpoint,
       bucket: oss.bucket,
-    });
+    })
 
     const result = yield client.get(argv.fileName, argv.filePath)
     if (result.res.status === 200) {

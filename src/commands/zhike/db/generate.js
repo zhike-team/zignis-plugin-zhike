@@ -15,7 +15,7 @@ exports.builder = function(yargs) {
   yargs.option('modify', { default: false, describe: 'modify field defination' })
 
   yargs.option('only-up', { default: false, describe: 'empty down process' })
-  yargs.option('simulate', { default: false, describe: 'only output in stdout' })
+  yargs.option('simulate', { default: false, describe: 'only output in stdout', alias: 'dry' })
   yargs.option('reverse', { default: false, describe: 'reverse up and down' })
   yargs.option('migration-dir', { default: false, describe: 'change migration dir' })
 
