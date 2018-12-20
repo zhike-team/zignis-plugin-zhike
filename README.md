@@ -20,7 +20,7 @@ Zhike related commands
   zignis zhike product <productId>      get zhike product info
   zignis zhike redis cmd [arguments..]  zhike redis tools                                               [aliases: cache]
   zignis zhike slice <keyword>          get zhike slice info
-  zignis zhike word [word]              personal word test
+  zignis zhike oss                      zhike oss tools
 ```
 
 # 命令说明
@@ -69,9 +69,9 @@ slice 命令用于查看智课视频切片相关信息
 
 pid 命令用于查看 Zhike pid 的详细信息
 
-**zignis zhike word**
+**zignis zhike oss**
 
-word 命令用于查看单词释义，如果不传参数，则是一个背单词的小功能
+oss 命令用于操作 oss，实现了上传，下载和列表等功能
 
 **zignis zhike cron**
 
