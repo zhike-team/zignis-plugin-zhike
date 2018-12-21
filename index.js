@@ -4,6 +4,7 @@ const DatabaseLoader = require('./src/common/db')
 const co = require('co')
 const { Utils } = require('zignis')
 const debug = require('debug')('zignis-plugin-zhike:index')
+const api = require('./src/common/api')
 
 const config = {
   get(keys) {
@@ -84,7 +85,8 @@ module.exports = {
         redis,
         cache: redis,
         config,
-        consul: config
+        consul: config,
+        api: api('zignis-plugin-zhike')
       }
     }
   },
@@ -133,7 +135,8 @@ module.exports = {
         redis,
         cache: redis,
         config,
-        consul: config
+        consul: config,
+        api
       }
     }).catch(e => {
       throw new Error(e.stack)
