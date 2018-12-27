@@ -115,7 +115,14 @@ class DatabaseLoader {
           const newField = field.replace(/(_.)/g, function(word) {
             return word[1].toUpperCase()
           })
+
           tableInfo[field].field = field
+          // for PG, check autoIncrement rule 
+          if (/^nextval\(.*?::regclass\)$/.test(tableInfo[field].defaultValue)) {
+            delete tableInfo[field].defaultValue
+            tableInfo[field].autoIncrement = true
+          }
+
           newTableInfo[newField] = tableInfo[field]
           newTableFields.push(newField)
         })
