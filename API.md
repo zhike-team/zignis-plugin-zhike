@@ -75,4 +75,20 @@ const config = await consul.getAndWatch('socialPrivate,oss', function(key, value
 
 Returns **[object][1]** Zhike resources, for now include consul, redis, db.
 
+## load
+
+实例化数据库连接，数据库配置可以从 consul 取，也可以直接传给 load 方法
+
+### Parameters
+
+-   `consulKey` **([string][2] \| [array][3])** 
+-   `instanceKey` **[string][2]**  (optional, default `''`)
+-   `callback` **[function][4]** 
+
 [1]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+
+[2]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+
+[3]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+
+[4]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
