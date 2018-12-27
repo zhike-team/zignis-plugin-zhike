@@ -24,6 +24,12 @@ class DatabaseLoader {
     return this.instances
   }
 
+  /**
+   * 实例化数据库连接，数据库配置可以从 consul 取，也可以直接传给 load 方法
+   * @param {string|array} consulKey 
+   * @param {string} instanceKey 
+   * @param {function} callback 
+   */
   load(consulKey, instanceKey = '', callback) {
     let that = this
     return co(function*() {
@@ -34,16 +40,26 @@ class DatabaseLoader {
         return that.instances[instanceKey]
       }
 
-      const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
-      const keysPrefix = [consulKey.split('.')[0]]
+      let dbConfig
+      if (_.isObject(consulKey)) {
+        if (!instanceKey) {
+          throw new Error('The second parameter:instanceKey is required!')
+        }
+        dbConfig = consulKey
 
-      const consul = new Consul(keysPrefix, consulConfig[env].host, consulConfig[env].port, {}, {
-        output: false,
-        timeout: 5000
-      })
+      } else {
+        const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
+        const keysPrefix = [consulKey.split('.')[0]]
 
-      const data = yield consul.pull(env)
-      let dbConfig = _.get(data.CFG, consulKey)
+        const consul = new Consul(keysPrefix, consulConfig[env].host, consulConfig[env].port, {}, {
+          output: false,
+          timeout: 5000
+        })
+
+        const data = yield consul.pull(env)
+        dbConfig = _.get(data.CFG, consulKey)
+      }
+      
       if (!dbConfig) {
         throw new Error('consulKey not exist')
       }
@@ -153,7 +169,7 @@ class DatabaseLoader {
         return that.instances[instanceKey]
       }
     }).catch(e => {
-      Utils.error(e.stack)
+      throw new Error(e.stack)
     })
   }
 
