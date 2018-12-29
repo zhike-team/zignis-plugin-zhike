@@ -6,6 +6,7 @@ const { Utils } = require('zignis')
 
 const isReachable = require('is-reachable')
 const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
+const consulCachedKV = {}
 
 exports.command = 'consul [keys..]'
 exports.desc = 'zhike consul config review'
@@ -40,17 +41,24 @@ exports.handler = function(argv) {
       keysPrefix.push(key.split('.')[0])
     })
 
-    const consul = new Consul(
-      keysPrefix,
-      consulConfig[env].host,
-      consulConfig[env].port,
-      {},
-      {
-        output: false,
-        timeout: 5000
-      }
-    )
-    const data = yield consul.pull(env)
+    const cacheKey = `${env}:${Utils.md5(JSON.stringify(keysPrefix))}`
+    let data
+    if (consulCachedKV[cacheKey]) {
+      data = consulCachedKV[cacheKey]
+    } else {
+      const consul = new Consul(
+        keysPrefix,
+        consulConfig[env].host,
+        consulConfig[env].port,
+        {},
+        {
+          output: false,
+          timeout: 5000
+        }
+      )
+      data = yield consul.pull(env)
+      consulCachedKV[cacheKey] = data
+    }
 
     const pickNeededFromPull = {}
     argv.keys.map(key => {
