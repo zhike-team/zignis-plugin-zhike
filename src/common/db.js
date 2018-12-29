@@ -1,13 +1,8 @@
-const Consul = require('zhike-consul')
-const consulConfig = require('../../consul.json')
 const Sequelize = require('sequelize')
 const _ = require('lodash')
 const co = require('co')
 const fs = require('fs')
-
-const { Utils } = require('zignis')
-
-const ZIGNIS_CONSUL_PULL_RETRY_TIMES = 5
+const consulCommand = require('../commands/zhike/consul')
 
 class DatabaseLoader {
   constructor(options) {
@@ -50,32 +45,8 @@ class DatabaseLoader {
         dbConfig = consulKey
 
       } else {
-        const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
-        const keysPrefix = [consulKey.split('.')[0]]
-
-        const consul = new Consul(keysPrefix, consulConfig[env].host, consulConfig[env].port, {}, {
-          output: false,
-          timeout: 5000
-        })
-
-        let retry = ZIGNIS_CONSUL_PULL_RETRY_TIMES
-        let data = {}
-        while (retry) {
-          retry--
-          try {
-            data = yield consul.pull(env)
-            break
-          } catch (e) {
-            if (retry > 0) {
-              console.log('Consul pull retry...')
-              continue
-            } else {
-              throw new Error(e.stack)
-            }
-          }
-        }
-        
-        dbConfig = _.get(data.CFG, consulKey)
+        const { result } = yield consulCommand.handler({ keys: [consulKey], silent: true })
+        dbConfig = _.get(result, consulKey)
       }
       
       if (!dbConfig) {
