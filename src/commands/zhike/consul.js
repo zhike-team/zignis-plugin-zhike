@@ -7,6 +7,7 @@ const { Utils } = require('zignis')
 const isReachable = require('is-reachable')
 const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
 const consulCachedKV = {}
+const consulCachedInstance = {}
 
 exports.command = 'consul [keys..]'
 exports.desc = 'zhike consul config review'
@@ -43,8 +44,10 @@ exports.handler = function(argv) {
 
     const cacheKey = `${env}:${Utils.md5(JSON.stringify(keysPrefix))}`
     let data
+    let consul
     if (consulCachedKV[cacheKey]) {
       data = consulCachedKV[cacheKey]
+      consul = consulCachedInstance[cacheKey]
     } else {
       const consul = new Consul(
         keysPrefix,
@@ -58,6 +61,7 @@ exports.handler = function(argv) {
       )
       data = yield consul.pull(env)
       consulCachedKV[cacheKey] = data
+      consulCachedInstance[cacheKey] = consul
     }
 
     const pickNeededFromPull = {}
