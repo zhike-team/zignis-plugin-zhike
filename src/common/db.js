@@ -7,6 +7,8 @@ const fs = require('fs')
 
 const { Utils } = require('zignis')
 
+const ZIGNIS_CONSUL_PULL_RETRY_TIMES = 5
+
 class DatabaseLoader {
   constructor(options) {
     this.options = Object.assign(
@@ -56,7 +58,23 @@ class DatabaseLoader {
           timeout: 5000
         })
 
-        const data = yield consul.pull(env)
+        let retry = ZIGNIS_CONSUL_PULL_RETRY_TIMES
+        let data = {}
+        while (retry) {
+          retry--
+          try {
+            data = yield consul.pull(env)
+            break
+          } catch (e) {
+            if (retry > 0) {
+              console.log('Consul pull retry...')
+              continue
+            } else {
+              throw new Error(e.stack)
+            }
+          }
+        }
+        
         dbConfig = _.get(data.CFG, consulKey)
       }
       
