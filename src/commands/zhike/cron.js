@@ -4,11 +4,11 @@ const cron = require('node-cron')
 const path = require('path')
 const promisify = require('util.promisify')
 const fs = require('fs')
-const debug = require('debug')('zignis-plugin-zhike:cron')
 const execFile = promisify(require('child_process').execFile)
 
 const { components } = require('../../../')
 const { Utils } = require('zignis')
+const debug = Utils.debug('zignis-plugin-zhike:cron')
 
 const DEFAULT_EXPIRE_MILLISECONDS = 60000
 

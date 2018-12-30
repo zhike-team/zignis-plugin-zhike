@@ -3,18 +3,13 @@ const axios = require('axios')
 const querystring = require('querystring')
 
 module.exports = function(service) {
-  const debug = require('debug')(service)
+  const debug = Utils.debug(service)
   const API = axios.create({ headers: { 'x-service': service } })
   API.interceptors.request.use(
     function(config) {
       // Log API request info
       if (config.params) {
-        debug(
-          '调用服务：',
-          `${Utils._.upperCase(config.method)} ${config.url}?${querystring.stringify(
-            config.params
-          )}`
-        )
+        debug('调用服务：', `${Utils._.upperCase(config.method)} ${config.url}?${querystring.stringify(config.params)}`)
       } else {
         debug('调用服务：', `${Utils._.upperCase(config.method)} ${config.url}`)
       }

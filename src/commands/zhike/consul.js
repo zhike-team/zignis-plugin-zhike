@@ -46,7 +46,7 @@ exports.handler = function(argv) {
     } else {
       const checkReachable = yield isReachable(`${consulConfig[env].host}:${consulConfig[env].port}`)
       if (!checkReachable) {
-        Utils.error('Consul host not reachable!')
+        Utils.error(`Consul host ${consulConfig[env].host}:${consulConfig[env].port} not reachable!`)
       }
       consul = new Consul(
         keysPrefix,

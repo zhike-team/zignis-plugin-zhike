@@ -3,7 +3,7 @@ const consulCommand = require('./src/commands/zhike/consul')
 const DatabaseLoader = require('./src/common/db')
 const co = require('co')
 const { Utils } = require('zignis')
-const debug = require('debug')('zignis-plugin-zhike:index')
+const debug = Utils.debug('zignis-plugin-zhike:index')
 const api = require('./src/common/api')
 
 const config = {
