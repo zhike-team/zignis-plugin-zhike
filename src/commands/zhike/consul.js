@@ -32,36 +32,43 @@ exports.handler = function(argv) {
       Utils.error('Please provide at least 1 key')
     }
 
-    const checkReachable = yield isReachable(`${consulConfig[env].host}:${consulConfig[env].port}`)
-    if (!checkReachable) {
-      Utils.error('Consul host not reachable!')
-    }
-
     const keysPrefix = []
     argv.keys.map(key => {
       keysPrefix.push(key.split('.')[0])
     })
 
     const cacheKey = `${env}:${Utils.md5(JSON.stringify(keysPrefix))}`
+    const cacheInstanceKey = `${Utils.md5(JSON.stringify(consulConfig[env]))}`
     let data
     let consul
     if (consulCachedKV[cacheKey]) {
       data = consulCachedKV[cacheKey]
-      consul = consulCachedInstance[cacheKey]
+      // If kv cache exist, instance cache must be exist
+      consul = consulCachedInstance[cacheInstanceKey]
     } else {
-      const consul = new Consul(
-        keysPrefix,
-        consulConfig[env].host,
-        consulConfig[env].port,
-        {},
-        {
-          output: false,
-          timeout: 5000
+      // If kv cache not exist, we can still reuse instance cache
+      if (consulCachedInstance[cacheInstanceKey]) {
+        consul = consulCachedInstance[cacheInstanceKey]
+      } else {
+        const checkReachable = yield isReachable(`${consulConfig[env].host}:${consulConfig[env].port}`)
+        if (!checkReachable) {
+          Utils.error('Consul host not reachable!')
         }
-      )
+        consul = new Consul(
+          keysPrefix,
+          consulConfig[env].host,
+          consulConfig[env].port,
+          {},
+          {
+            output: false,
+            timeout: 5000
+          }
+        )
+      }
+
       data = yield consul.pull(env)
       consulCachedKV[cacheKey] = data
-      consulCachedInstance[cacheKey] = consul
+      consulCachedInstance[cacheInstanceKey] = consul
     }
 
     const pickNeededFromPull = {}
