@@ -3,9 +3,6 @@ const { Kubectl } = require('../../../common/kubectl')
 const fs = require('fs')
 const spawn = require('child_process').spawn
 const co = require('co')
-const inquirer = require('inquirer')
-inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
-const fuzzy = require('fuzzy')
 
 const filterFuzzy = (list, keyword) =>
   list.filter(item =>
@@ -72,7 +69,7 @@ exports.handler = function(argv) {
       return
     }
 
-    inquirer
+    Utils.inquirer
       .prompt([
         {
           type: 'autocomplete',
@@ -82,7 +79,7 @@ exports.handler = function(argv) {
             input = input || ''
 
             return new Promise(function(resolve) {
-              const fuzzyResult = fuzzy.filter(input, filteredPods.sort())
+              const fuzzyResult = Utils.fuzzy.filter(input, filteredPods.sort())
               resolve(
                 fuzzyResult.map(function(el) {
                   return el.original

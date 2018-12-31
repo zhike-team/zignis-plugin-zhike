@@ -1,6 +1,5 @@
 const co = require('co')
 const path = require('path')
-const inquirer = require('inquirer')
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 const { Utils } = require('zignis')
@@ -69,7 +68,7 @@ exports.handler = function(argv) {
     if (users.length === 1) {
       processSelectedUser(users[0])
     } else {
-      inquirer
+      Utils.inquirer
         .prompt([
           {
             type: 'list',

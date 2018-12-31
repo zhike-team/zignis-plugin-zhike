@@ -3,8 +3,6 @@ const { Kubectl } = require('../../../common/kubectl')
 const fs = require('fs')
 const co = require('co')
 const shell = require('shelljs')
-const inquirer = require('inquirer')
-inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
 
 const filterFuzzy = (list, keyword) =>
   list.filter(item =>
@@ -72,7 +70,7 @@ exports.handler = function(argv) {
       return
     }
 
-    inquirer
+    Utils.inquirer
       .prompt([
         {
           type: 'checkbox',

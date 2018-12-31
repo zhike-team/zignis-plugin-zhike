@@ -2,8 +2,6 @@ const { Utils } = require('zignis')
 const { Kubectl } = require('../../../common/kubectl')
 const fs = require('fs')
 const co = require('co')
-const inquirer = require('inquirer')
-inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
 
 const filterFuzzy = (list, keyword) =>
   list.filter(item =>

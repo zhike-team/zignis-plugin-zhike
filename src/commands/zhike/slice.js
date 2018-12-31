@@ -1,7 +1,4 @@
 const co = require('co')
-const inquirer = require('inquirer')
-inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
-const fuzzy = require('fuzzy')
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 const { components } = require('../../../')
@@ -109,7 +106,7 @@ exports.handler = function(argv) {
     if (files.length === 1) {
       yield processSlice(files[0], transcodeDb.models)
     } else {
-      const answers = yield inquirer.prompt([
+      const answers = yield Utils.inquirer.prompt([
         {
           type: 'autocomplete',
           name: 'selected',
@@ -119,7 +116,9 @@ exports.handler = function(argv) {
 
             return new Promise(function(resolve) {
               if (argv.fuzzy) {
-                resolve(fuzzy.filter(input, files.map(file => `[${file.id}]-${file.name}`)).map(el => el.original))
+                resolve(
+                  Utils.fuzzy.filter(input, files.map(file => `[${file.id}]-${file.name}`)).map(el => el.original)
+                )
               } else {
                 resolve(
                   files

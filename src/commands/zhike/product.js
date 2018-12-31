@@ -1,6 +1,5 @@
 const { components } = require('../../../')
 const { Utils } = require('zignis')
-const inquirer = require('inquirer')
 const co = require('co')
 
 exports.command = 'product <productId>'
@@ -31,7 +30,7 @@ exports.handler = function(argv) {
 
     let ProductType = argv.type
     if (argv.select) {
-      const answers = yield inquirer.prompt([
+      const answers = yield Utils.inquirer.prompt([
         {
           type: 'list',
           name: 'selected',
