@@ -12,6 +12,12 @@ exports.aliases = 'upload'
 exports.builder = function (yargs) {
   yargs.option('simulate', { default: false, describe: 'Just simulate to show what files will be uploaded', alias: 'dry' })
   yargs.option('prefix', { default: false, describe: 'Only upload prefix matched file, and also prefix will be cut off' })
+  
+  yargs.option('header-content-type', { default: false, describe: 'Set header: Content-Type' })
+  yargs.option('header-cache-control', { default: false, describe: 'Set header: Cache-Control' })
+  yargs.option('header-content-disposition', { default: false, describe: 'Set header: Content-Disposition' })
+  yargs.option('header-content-encoding', { default: false, describe: 'Set header: Content-Encoding' })
+  yargs.option('header-expires', { default: false, describe: 'Set header: Expires' })
 }
 
 exports.handler = function (argv) {
@@ -55,6 +61,30 @@ exports.handler = function (argv) {
     if (argv.simulate) {
       matchedFiles.forEach(filePath => Utils.log(filePath))
       process.exit(0)
+    }
+
+    const options = {
+      headers: {}
+    }
+
+    if (argv.headerContentType) {
+      options.mime = argv.headerContentType
+    }
+
+    if (argv.headerCacheControl) {
+      options.headers['Cache-Control'] = argv.headerCacheControl
+    }
+
+    if (argv.headerContentDisposition) {
+      options.headers['Content-Disposition'] = argv.headerContentDisposition
+    }
+
+    if (argv.headerContentEncoding) {
+      options.headers['Content-Encoding'] = argv.headerContentEncoding
+    }
+
+    if (argv.headerExpires) {
+      options.headers['Expires'] = argv.headerExpires
     }
 
     for (let filePath of matchedFiles) {
