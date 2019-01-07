@@ -49,13 +49,23 @@ exports.command = 'cron [job]'
 exports.desc = `zhike cron system`
 
 exports.builder = function(yargs) {
-  // yargs.option('option', {default, describe, alias})
+  yargs.option('require', { default: false, describe: 'require init scripts before all jobs start to run' })
 }
 
 exports.handler = function(argv) {
   if (!argv.cronDir || !fs.existsSync(argv.cronDir)) {
     console.log(Utils.chalk.red('"cronDir" missing in config file or not exist in current directory!'))
     return
+  }
+
+  if (argv.require) {
+    if (Utils._.isString(argv.require)) {
+      argv.require = [argv.require]
+    }
+
+    argv.require.forEach(filePath => {
+      require(path.resolve(process.cwd(), filePath))
+    })
   }
 
   const config = Utils.getCombinedConfig()
