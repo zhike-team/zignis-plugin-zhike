@@ -15,7 +15,7 @@ const DEFAULT_EXPIRE_MILLISECONDS = 60000
 // 执行器
 const shell = {
   // 执行单条系统命令
-  exec: function*(action) {
+  exec: function*(action, initInfo) {
     try {
       if (typeof action === 'string') {
         debug(`Action: [${action}] executed!`)
@@ -25,7 +25,7 @@ const shell = {
       } else if (typeof action === 'function') {
         const name = action.name ? action.name : 'function'
         debug(`Action: [${name}] executed!`)
-        yield action()
+        yield action(initInfo)
       }
     } catch (e) {
       debug(e.stack)
@@ -33,10 +33,10 @@ const shell = {
   },
 
   // 执行多条系统命令
-  series: function*(actions) {
+  series: function*(actions, initInfo) {
     const loops = actions.concat()
     const execNext = function*() {
-      yield shell.exec(loops.shift())
+      yield shell.exec(loops.shift(), initInfo)
       if (loops.length > 0) {
         yield execNext()
       }
@@ -49,7 +49,6 @@ exports.command = 'cron [job]'
 exports.desc = `zhike cron system`
 
 exports.builder = function(yargs) {
-  yargs.option('require', { default: false, describe: 'require init scripts before all jobs start to run' })
 }
 
 exports.handler = function(argv) {
@@ -58,24 +57,18 @@ exports.handler = function(argv) {
     return
   }
 
-  if (argv.require) {
-    if (Utils._.isString(argv.require)) {
-      argv.require = [argv.require]
-    }
-
-    argv.require.forEach(filePath => {
-      require(path.resolve(process.cwd(), filePath))
-    })
-  }
-
   const config = Utils.getCombinedConfig()
   co(function*() {
+
+    // 通过 Hook 进行初始化动作
+    const initInfo = await Utils.invokeHook('zhike:cron')
+
     // run specific job for testing, ignore disabled property
     if (argv.job) {
       if (fs.existsSync(path.resolve(process.cwd(), argv.job))) {
         const jobModule = require(path.resolve(process.cwd(), argv.job))
         if (jobModule && jobModule.actions && Utils._.isArray(jobModule.actions)) {
-          yield shell.series(jobModule.actions)
+          yield shell.series(jobModule.actions, initInfo)
           process.exit(0)
         } else {
           Utils.error('Job not valid')
@@ -133,7 +126,7 @@ exports.handler = function(argv) {
               jobs[key].duration ? jobs[key].duration : DEFAULT_EXPIRE_MILLISECONDS
             )
             if (ok) {
-              yield shell.series(jobs[key].actions)
+              yield shell.series(jobs[key].actions, initInfo)
               yield unlock(redisKey, redisValue)
             } else {
               debug('lock acquire failed.')
