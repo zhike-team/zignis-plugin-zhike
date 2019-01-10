@@ -61,7 +61,7 @@ exports.handler = function(argv) {
   co(function*() {
 
     // 通过 Hook 进行初始化动作
-    const initInfo = yield Utils.invokeHook('zhike:cron')
+    const initInfo = yield Utils.invokeHook('zhike_cron')
 
     // run specific job for testing, ignore disabled property
     if (argv.job) {
