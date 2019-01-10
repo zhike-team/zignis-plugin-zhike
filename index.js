@@ -52,6 +52,9 @@ const config = {
 }
 
 module.exports = {
+  hook: {
+    cron: 'Hook triggered in zignis zhike cron command'
+  },
   /**
    * Implement hook: repl.
    * Add Zhike resources into Zignis REPL mode.
