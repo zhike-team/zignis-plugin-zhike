@@ -159,7 +159,27 @@ db migrate tool
 - 'first_name:string last_name:string bio:text reviews:array:string'
 - 'first_name:string, last_name:string, bio:text, reviews:array:string'
 
-# 实现 repl 钩子
+# 钩子机制
+
+## 定义的钩子
+
+### `zhike_cron` 
+
+可以为项目的所有计划任务脚本进行初始化，如果初始化资源不是通过全局变量传递的，这个钩子的返回值将传给每一个计划任务脚本
+
+```
+/**
+  * hook:zhike_cron
+  * 为计划任务进行统一初始化
+  */
+  async zhike_cron () {
+    await init()
+  }
+```
+
+## 实现的钩子
+
+### 实现了核心的 `repl` 钩子
 
 `Node.js` 内置的 `node` 命令的 `REPL` 里可以用来尝试一些基本的 node 和 javascript 的用法，但是这还远远不够，我们希望 REPL 可以对项目开发有帮助，可以操作公司技术架构的各种基础设施。
 
@@ -177,9 +197,9 @@ $ zignis repl
 
 其中 zhike.db 的用法是专门针对公司的关系型数据库集群，基于 `Sequelize` 进行的封装，不需要自定义或者同步 schema，直接就可以使用，支持 mysql 和 postgres 两个数据库引擎，有过还有其他引擎，也可以基于 `Sequelize` 来进行扩展。
 
-# 基于插件开发项目
+### 实现了核心的 `components` 钩子
 
-这个插件还有一个作用是，可以直接用于做项目开发，主要使用的是通过 components 暴露出来的对 配置，缓存和数据库的封装，可以在开发时直接操作数据库，不需要写太多和数据库初始化相关的逻辑。以下的代码演示了基本的使用方法。
+为插件开发和项目开发提供支持，主要使用的是通过 components 暴露出来的对 配置服务，缓存和数据库的封装，可以在开发时直接操作数据库，不需要写太多和数据库初始化相关的逻辑。以下的代码演示了基本的使用方法。
 
 **yield/co style:**
 
