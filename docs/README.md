@@ -210,7 +210,7 @@ const path = require('path')
 const { components } = require('zignis-plugin-zhike')
 co(function* () {
   const zhike = yield components()
-  const db = yield zhike.db.load('db/social', 'social', zhike.db.associate(path.resolve('./model')))
+  const db = yield zhike.db.load('db/social', 'social', path.resolve('./model'))
   const { WechatUser, WechatApplication } = db.models
   const user = yield WechatUser.findOne({
     raw: true,

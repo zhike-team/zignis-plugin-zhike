@@ -188,8 +188,11 @@ class DatabaseLoader {
         } catch (e) {}
       })
 
-      if (callback) {
+      if (_.isFunction(callback)) {
         callback(sequelize)
+      } else if (_.isString(callback)) {
+        // implicitly means to call this.associate, and callback is actually modealPath
+        this.associate(callback)(sequelize)
       }
 
       if (that.options.loadReturnInstance) {
@@ -200,6 +203,10 @@ class DatabaseLoader {
     })
   }
 
+  /**
+   * 处理模型的关联关系
+   * @param {string} modelPath 
+   */
   associate(modelPath) {
     return function(sequelize) {
       Object.keys(sequelize.models).forEach(modelName => {

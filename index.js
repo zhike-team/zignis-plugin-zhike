@@ -153,11 +153,18 @@ module.exports = {
     })
   },
 
+  /** Expose db, so you can directly use it without await component() or invokeHook('components') */
   db: dbForComponent,
+  /** It's db alias */
   database: dbForComponent,
-  config,
+  /** Expose consul, so you can directly use it without await component() or invokeHook('components') */
   consul: config,
+  /** It's consul alias */
+  config,
+  /** Expose redis, so you can directly use it without await component() or invokeHook('components') */
   redis: redisInstance,
+  /** It's redis alias */
   cache: redisInstance,
+  /** Expose api, so you can directly use it without await component() or invokeHook('components') */
   api,
 }
