@@ -49,6 +49,8 @@ class DatabaseLoader {
       if (dbConfig.user && !dbConfig.username) {
         dbConfig.username = dbConfig.user
       }
+
+      return dbConfig
     })
   }
 
