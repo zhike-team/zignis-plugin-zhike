@@ -22,6 +22,37 @@ class DatabaseLoader {
   }
 
   /**
+   * 获取数据库配置，可以直接被 Sequelize CLI 解析
+   * @param {string|array} consulKey 
+   */
+  config(consulKey) {
+    return co(function*() {
+      instanceKey = instanceKey || consulKey
+
+      let dbConfig
+      if (_.isObject(consulKey)) {
+        dbConfig = consulKey
+
+      } else {
+        const { result } = yield consulCommand.handler({ keys: [consulKey], silent: true })
+        dbConfig = _.get(result, consulKey)
+      }
+      
+      if (!dbConfig) {
+        throw new Error('consulKey not exist')
+      }
+
+      if (dbConfig.options) {
+        dbConfig = Object.assign({}, dbConfig, dbConfig.options)
+      }
+
+      if (dbConfig.user && !dbConfig.username) {
+        dbConfig.username = dbConfig.user
+      }
+    })
+  }
+
+  /**
    * 实例化数据库连接，数据库配置可以从 consul 取，也可以直接传给 load 方法
    * @param {string|array} consulKey 
    * @param {string} instanceKey 
