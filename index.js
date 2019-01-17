@@ -1,6 +1,8 @@
 const Redis = require('ioredis')
 const consulCommand = require('./src/commands/zhike/consul')
 const DatabaseLoader = require('./src/common/db')
+const dbForComponent = new DatabaseLoader({ loadReturnInstance: true })
+const dbForRepl = new DatabaseLoader({ readonly: true })
 const co = require('co')
 const { Utils } = require('zignis')
 const debug = Utils.debug('zignis-plugin-zhike:index')
@@ -51,6 +53,15 @@ const config = {
   }
 }
 
+const redisInstance = () => {
+  return co(function*() {
+    const { redis: redisConfig } = yield config.get('redis')
+    const redis = new Redis(redisConfig)
+
+    return redis
+  })
+}
+
 module.exports = {
   hook: {
     cron: 'Hook triggered in zignis zhike cron command'
@@ -78,13 +89,11 @@ module.exports = {
    * @returns {object} Zhike resources, for now include consul, redis, db.
    */
   *repl() {
-    const { redis: redisConfig } = yield config.get('redis')
-    const redis = new Redis(redisConfig)
-    const db = new DatabaseLoader({ readonly: true })
+    const redis = yield redisInstance()
     return {
       zhike: {
-        db,
-        database: db,
+        db: dbForRepl,
+        database: dbForRepl,
         redis,
         cache: redis,
         config,
@@ -129,12 +138,10 @@ module.exports = {
    */
   components: () => {
     return co(function*() {
-      const { redis: redisConfig } = yield config.get('redis')
-      const redis = new Redis(redisConfig)
-      const db = new DatabaseLoader({ loadReturnInstance: true })
+      const redis = redisInstance()
       return {
-        db,
-        database: db,
+        db: dbForComponent,
+        database: dbForComponent,
         redis,
         cache: redis,
         config,
@@ -144,5 +151,13 @@ module.exports = {
     }).catch(e => {
       throw new Error(e.stack)
     })
-  }
+  },
+
+  db: dbForComponent,
+  database: dbForComponent,
+  config,
+  consul: config,
+  redis: redisInstance,
+  cache: redisInstance,
+  api,
 }

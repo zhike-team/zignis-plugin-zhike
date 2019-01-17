@@ -27,8 +27,6 @@ class DatabaseLoader {
    */
   config(consulKey) {
     return co(function*() {
-      instanceKey = instanceKey || consulKey
-
       let dbConfig
       if (_.isObject(consulKey)) {
         dbConfig = consulKey
