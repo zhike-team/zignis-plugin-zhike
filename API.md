@@ -75,6 +75,34 @@ const config = await consul.getAndWatch('socialPrivate,oss', function(key, value
 
 Returns **[object][1]** Zhike resources, for now include consul, redis, db.
 
+## db
+
+Expose db, so you can directly use it without await component() or invokeHook('components')
+
+## database
+
+It's db alias
+
+## consul
+
+Expose consul, so you can directly use it without await component() or invokeHook('components')
+
+## config
+
+It's consul alias
+
+## redis
+
+Expose redis, so you can directly use it without await component() or invokeHook('components')
+
+## cache
+
+It's redis alias
+
+## api
+
+Expose api, so you can directly use it without await component() or invokeHook('components')
+
 ## config
 
 获取数据库配置，可以直接被 Sequelize CLI 解析
@@ -92,6 +120,14 @@ Returns **[object][1]** Zhike resources, for now include consul, redis, db.
 -   `consulKey` **([string][2] \| [array][3])** 
 -   `instanceKey` **[string][2]**  (optional, default `''`)
 -   `callback` **[function][4]** 
+
+## associate
+
+处理模型的关联关系
+
+### Parameters
+
+-   `modelPath` **[string][2]** 
 
 [1]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
 
