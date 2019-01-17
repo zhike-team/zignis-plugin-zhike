@@ -75,6 +75,14 @@ const config = await consul.getAndWatch('socialPrivate,oss', function(key, value
 
 Returns **[object][1]** Zhike resources, for now include consul, redis, db.
 
+## config
+
+获取数据库配置，可以直接被 Sequelize CLI 解析
+
+### Parameters
+
+-   `consulKey` **([string][2] \| [array][3])** 
+
 ## load
 
 实例化数据库连接，数据库配置可以从 consul 取，也可以直接传给 load 方法
