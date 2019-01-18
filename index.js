@@ -138,7 +138,7 @@ module.exports = {
    */
   components: () => {
     return co(function*() {
-      const redis = redisInstance()
+      const redis = yield redisInstance()
       return {
         db: dbForComponent,
         database: dbForComponent,
