@@ -154,6 +154,10 @@ const genFieldType = function(_attr) {
 }
 
 const validateDataType = function(dataType, sequelize) {
+  if (/^\w+\(\d+\)$/.test(dataType)) {
+    dataType = dataType.replace(/\(\d+\)/, '')
+  }
+
   const DataTypes = sequelize.Sequelize.DataTypes
   if (!DataTypes[dataType.toUpperCase()]) {
     Utils.error(`Unknown type '${dataType}'`)
@@ -165,7 +169,8 @@ const validateDataType = function(dataType, sequelize) {
 const formatAttributes = function(attribute) {
   let result
   const split = attribute.split(':')
-
+  const validAttributeFunctionType = 'array';
+  
   if (split.length === 2) {
     result = { fieldName: split[0], dataType: split[1], dataFunction: null }
   } else if (split.length === 3) {

@@ -40,7 +40,7 @@ exports.handler = function(argv) {
 
     const dbConfig = Utils._.get(yield config.get(argv.dbKey), argv.dbKey)
 
-    let tableName = dbConfig.prefix ? dbConfig.prefix + argv.tableName : argv.tableName
+    let tableName = dbConfig.prefix && argv.tableName.indexOf(dbConfig.prefix) !== 0 ? dbConfig.prefix + argv.tableName : argv.tableName
 
     let ret
     if (argv.fieldName) {
