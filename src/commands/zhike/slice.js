@@ -19,7 +19,7 @@ const format = function(file) {
   return file
 }
 
-const processSlice = function*(file, { FileFormat, Format }) {
+const processSlice = function*(file, { FileFormat, Format }, argv) {
   const versions = yield FileFormat.findAll({
     raw: true,
     where: {
@@ -64,7 +64,12 @@ const processSlice = function*(file, { FileFormat, Format }) {
 
   if (versionsTable.length > 0) {
     console.log(Utils.chalk.cyan('Versions:'))
-    console.log(Utils.table(versionsTable))
+    if (argv.simple) {
+      Utils.outputTable(versionsTable)
+    } else {
+      console.log(Utils.table(versionsTable))
+    }
+    
   }
 }
 
@@ -75,6 +80,11 @@ exports.builder = function(yargs) {
   yargs.option('fuzzy', {
     default: false,
     describe: 'match item in fuzzy mode'
+  })
+
+  yargs.option('simple', {
+    default: false,
+    describe: 'show versions using simple table'
   })
 }
 
@@ -104,7 +114,7 @@ exports.handler = function(argv) {
     })
 
     if (files.length === 1) {
-      yield processSlice(files[0], transcodeDb.models)
+      yield processSlice(files[0], transcodeDb.models, argv)
     } else {
       const answers = yield Utils.inquirer.prompt([
         {
@@ -139,7 +149,7 @@ exports.handler = function(argv) {
 
       const matched = /^\[(\d+)\]-/.exec(answers.selected)
       const file = Utils._.find(files, { id: Number(matched[1]) })
-      yield processSlice(file, transcodeDb.models)
+      yield processSlice(file, transcodeDb.models, argv)
     }
 
     process.exit(0)
