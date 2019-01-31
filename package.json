@@ -35,12 +35,12 @@
     "zhike-consul": "^1.0.12"
   },
   "peerDependencies": {
-    "zignis": "^1.2.6"
+    "zignis": "^1.2.10"
   },
   "devDependencies": {
     "documentation": "^8.1.2"
   },
   "scripts": {
-    "jsdoc": "documentation build  index.js -f md --markdown-toc=false > docs/API.md"
+    "jsdoc": "documentation build index.js src/hooks/index.js -f md --markdown-toc=false --pe=false > docs/API.md"
   }
 }

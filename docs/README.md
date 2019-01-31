@@ -163,7 +163,7 @@ db migrate tool
 
 ## 定义的钩子
 
-### `zhike_cron` 
+### `hook_zhike_cron` 
 
 可以为项目的所有计划任务脚本进行初始化，如果初始化资源不是通过全局变量传递的，这个钩子的返回值将传给每一个计划任务脚本
 
@@ -172,7 +172,7 @@ db migrate tool
   * hook:zhike_cron
   * 为计划任务进行统一初始化
   */
-  async zhike_cron () {
+  async hook_zhike_cron () {
     await init()
   }
 ```
@@ -207,9 +207,9 @@ $ zignis repl
 const co = require('co')
 const path = require('path')
 
-const { components } = require('zignis-plugin-zhike')
+const { Utils } = require('zignis')
 co(function* () {
-  const zhike = yield components()
+  const zhike = yield Utils.invokeHook()
   const db = yield zhike.db.load('db/social', 'social', path.resolve('./model'))
   const { WechatUser, WechatApplication } = db.models
   const user = yield WechatUser.findOne({
@@ -238,11 +238,11 @@ co(function* () {
 **async/await style:**
 
 ```
-const { components } = require('zignis-plugin-zhike')
+const { Utils } = require('zignis')
 const path = require('path')
 
 const start = async function () {
-  const zhike = await components()
+  const zhike = await Utils.invokeHook('components')
   const db = await  zhike.db.load('db/social', 'social', zhike.db.associate(path.resolve('./model')))
   const { WechatUser, WechatApplication } = db.models
   const user = await  WechatUser.findOne({
@@ -313,6 +313,7 @@ pluginDir: 'bin/zignis/plugins', // 插件目录
 extendDir: 'bin/zignis/extends', // 插件扩展目录
 scriptDir: 'bin/zignis/scripts', // 脚本目录
 cronDir: 'bin/zignis/crons',  // 计划任务目录
+hookDir: 'bin/zignis/hooks',  // 钩子目录
 migrationDir: 'bin/zignis/migrations' // 数据库迁移文件目录，大多数项目是有自己指定的目录的
 ```
 
