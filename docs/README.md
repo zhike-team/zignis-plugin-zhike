@@ -35,7 +35,7 @@ Zhike related commands
 
 **zignis zhike k8s**
 
-`k8s` 命令的用处是封装了几个常用的 `kubectl` 命令，并且能够兼容开发和线上两个环境。k8s 命令有两个依赖，一个是需要用户本地安装了 `kubectl` 二进制命令；另一个是设置好授权配置文件，需要在 `.bashrc` 或 `.zshrc` 等系统用户配置文件中设置两个全局常量，ZIGNIS_ZHIKE_K8S_DEV 和 ZIGNIS_ZHIKE_K8S_PROD，需要配置的是绝对路径。
+`k8s` 命令的用处是封装了几个常用的 `kubectl` 命令，并且能够兼容开发和线上两个环境。k8s 命令有两个依赖，一个是需要用户本地安装了 `kubectl` 二进制命令；另一个是设置好授权配置文件，需要在 `.bashrc` 或 `.zshrc` 等系统用户配置文件中设置两个全局常量，ZIGNIS_ZHIKE_K8S_DEV 和 ZIGNIS_ZHIKE_K8S_PROD，需要配置的是绝对路径，另外，这两个配置也可以放到全局配置里：`.zignisrc.json`，用法见下放默认配置小节。
 
 ```
 k8s list|ls|pods [keyword] 查看 pod 列表，keyword关键字可以缩小列表范围，keyword 前面加上 `~` 可以进行模糊搜索，后面的命令也有这个特点
@@ -293,10 +293,16 @@ module.exports = function({ Account }) {
 {
     "commandDefault": {
         "zhike": {
-          "k8s": {
-            "namespace": "c-production", # 默认使用的 k8s 命名空间
-            "binary": "/usr/local/bin/kubectl" # 默认使用的 kubectl 命令的绝对路径
-          }
+            "k8s": {
+                "namespace": "c-production", # 默认使用的 k8s 命名空间
+                "binary": "/usr/local/bin/kubectl" # 默认使用的 kubectl 命令的绝对路径
+                "config": {
+                    # 另一种设置 k8s dev 配置的方式，同时使用 环境变量 ZIGNIS_ZHIKE_K8S_DEV 优先
+                    "dev": "/Users/zhicheng/.kube/yuzhicheng.kubeconfig", 
+                    # 另一种设置 k8s prod 配置的方式，同时使用 环境变量 ZIGNIS_ZHIKE_K8S_PROD 优先
+                    "prod": "/Users/zhicheng/.kube/yuzhicheng-production.kubeconfig"
+                }
+            }
         }
     }
 }

@@ -17,6 +17,16 @@ exports.builder = function(yargs) {
     describe: 'k8s kubectl absolute path'
   })
 
+  yargs.option('dev-config-path', {
+    default: _.get(Utils.getCombinedConfig(), 'commandDefault.zhike.k8s.config.dev') || '',
+    describe: 'k8s dev config path'
+  })
+
+  yargs.option('prod-config-path', {
+    default: _.get(Utils.getCombinedConfig(), 'commandDefault.zhike.k8s.config.prod') || '',
+    describe: 'k8s prod config path'
+  })
+
   Utils.extendSubCommand('zhike/k8s', 'zignis-plugin-zhike', yargs, __dirname)
 }
 

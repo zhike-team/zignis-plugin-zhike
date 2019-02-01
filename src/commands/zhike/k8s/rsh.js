@@ -27,7 +27,8 @@ exports.handler = function(argv) {
   const binary = argv.binary
   const configType = namespace.indexOf('production') > -1 ? 'production' : 'development'
   const configPathEnv = configType === 'development' ? 'ZIGNIS_ZHIKE_K8S_DEV' : 'ZIGNIS_ZHIKE_K8S_PROD'
-  const kubeconfigPath = process.env[configPathEnv]
+  const configPathKey = configType === 'development' ? 'devConfigPath' : 'prodConfigPath'
+  const kubeconfigPath = process.env[configPathEnv] ? process.env[configPathEnv] : argv[configPathKey]
 
   if (!kubeconfigPath || !fs.existsSync(kubeconfigPath)) {
     console.error('kubeconfig file not found!')
