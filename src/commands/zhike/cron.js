@@ -6,7 +6,6 @@ const promisify = require('util.promisify')
 const fs = require('fs')
 const execFile = promisify(require('child_process').execFile)
 
-const { components } = require('../../../')
 const { Utils } = require('zignis')
 const debug = Utils.debug('zignis-plugin-zhike:cron')
 
@@ -78,7 +77,7 @@ exports.handler = function(argv) {
       }
     }
 
-    const { redis } = yield components()
+    const { redis } = yield Utils.invokeHook('components')
 
     // Redis锁，加锁
     const lock = function*(redisKey, redisValue, timeout) {
