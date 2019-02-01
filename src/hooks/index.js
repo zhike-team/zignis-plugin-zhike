@@ -84,7 +84,7 @@ module.exports = {
         cache: redis,
         config: Utils.config,
         consul: Utils.config,
-        api
+        api: Utils.api
       }
     }).catch(e => {
       throw new Error(e.stack)
