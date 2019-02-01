@@ -1,66 +1,4 @@
-const Redis = require('ioredis')
-const consulCommand = require('../commands/zhike/consul')
-const DatabaseLoader = require('../common/db')
-const dbForComponent = new DatabaseLoader({ loadReturnInstance: true })
-const dbForRepl = new DatabaseLoader({ readonly: true })
-const co = require('co')
-const { Utils } = require('zignis')
-const debug = Utils.debug('zignis-plugin-zhike:index')
-const api = require('../common/api')
-
-const config = {
-  get(keys) {
-    return co(function*() {
-      keys = Array.isArray(keys) ? keys : Utils.splitComma(keys)
-      const { result } = yield consulCommand.handler({ keys, silent: true })
-
-      return result
-    }).catch(e => {
-      throw new Error(e.stack)
-    })
-  },
-
-  getAndWatch(keys, callback) {
-    return co(function*() {
-      keys = Array.isArray(keys) ? keys : Utils.splitComma(keys)
-      const { result, zhikeConsul, env } = yield consulCommand.handler({ keys, silent: true })
-      const consul = zhikeConsul.consul
-
-      const watch = function(key) {
-        let watch = consul.watch({ method: consul.kv.get, options: { key } })
-
-        watch.once('change', function() {
-          // 初始会有一次 change 事件，忽略第一次的事件
-          watch.on('change', function(data) {
-            let value = JSON.parse(data.Value)[env]
-            debug(`CFG ${key} changed to:`, value)
-            callback && callback(key, value)
-          })
-
-          watch.on('error', function(err) {
-            // always received errors, but watch still working, use this event listenner to skip error
-            // console.log('error:', err);
-          })
-        })
-      }
-
-      keys.map(watch)
-
-      return result
-    }).catch(e => {
-      throw new Error(e.stack)
-    })
-  }
-}
-
-const redisInstance = () => {
-  return co(function*() {
-    const { redis: redisConfig } = yield config.get('redis')
-    const redis = new Redis(redisConfig)
-
-    return redis
-  })
-}
+const { Utils } = require('../../')
 
 module.exports = {
   hook_hook: {
@@ -89,16 +27,16 @@ module.exports = {
    * @returns {object} Zhike resources, for now include consul, redis, db.
    */
   *hook_repl() {
-    const redis = yield redisInstance()
+    const redis = yield Utils.redisInstance()
     return {
       zhike: {
-        db: dbForRepl,
-        database: dbForRepl,
+        db: Utils.dbForRepl,
+        database: Utils.dbForRepl,
         redis,
         cache: redis,
-        config,
-        consul: config,
-        api: api('zignis-plugin-zhike')
+        config: Utils.config,
+        consul: Utils.config,
+        api: Utils.api('zignis-plugin-zhike')
       }
     }
   },
@@ -122,14 +60,14 @@ module.exports = {
    * @example
    * // Zignis script db access demo
    * module.exports = function*(components) {
-   *   const { config } = yield components()
+   *   const { config } = yield Utils.invokeHook('components')
    *   console.log(yield config.get('oss'))
    *   console.log('Start to draw your dream code!')
    *   process.exit(0)
    * }
    * @example
    * // Consul config watch demo
-   * const { consul } = await components()
+   * const { consul } = await Utils.invokeHook('components')
    * const config = await consul.getAndWatch('socialPrivate,oss', function(key, value) {
    *   config[key] = value
    *   console.log(`Consul key: ${key} changed to:`, value)
@@ -138,14 +76,14 @@ module.exports = {
    */
   hook_components: () => {
     return co(function*() {
-      const redis = yield redisInstance()
+      const redis = yield Utils.redisInstance()
       return {
-        db: dbForComponent,
-        database: dbForComponent,
+        db: Utils.dbForComponent,
+        database: Utils.dbForComponent,
         redis,
         cache: redis,
-        config,
-        consul: config,
+        config: Utils.config,
+        consul: Utils.config,
         api
       }
     }).catch(e => {
