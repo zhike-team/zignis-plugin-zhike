@@ -68,5 +68,6 @@ module.exports = {
   dbForRepl,
   redisInstance,
   config,
-  api
+  api,
+  co
 }

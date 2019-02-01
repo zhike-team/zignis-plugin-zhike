@@ -75,7 +75,7 @@ module.exports = {
    * @returns {object} Zhike resources, for now include consul, redis, db.
    */
   hook_components: () => {
-    return co(function*() {
+    return Utils.co(function*() {
       const redis = yield Utils.redisInstance()
       return {
         db: Utils.dbForComponent,
