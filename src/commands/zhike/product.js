@@ -1,4 +1,3 @@
-const { components } = require('../../../')
 const { Utils } = require('zignis')
 const co = require('co')
 
@@ -19,7 +18,7 @@ exports.builder = function(yargs) {
 
 exports.handler = function(argv) {
   co(function*() {
-    const { db } = yield components()
+    const { db } = yield Utils.invokeHook('components')
     const atheneDb = yield db.load('db.athene', 'athene')
     const choices = ['Product', 'CrmProduct', 'UskidProduct']
 

@@ -1,6 +1,5 @@
 const co = require('co')
 const { Utils } = require('zignis')
-const { components } = require('../../../../')
 
 exports.command = 'list <dbKey>'
 exports.desc = 'list all table of specific database'
@@ -10,7 +9,7 @@ exports.builder = function(yargs) {}
 
 exports.handler = function(argv) {
   co(function*() {
-    const { db } = yield components()
+    const { db } = yield Utils.invokeHook('components')
     let dbInstance
     try {
       dbInstance = yield db.load(argv.dbKey)

@@ -2,7 +2,6 @@ const co = require('co')
 const fs = require('fs')
 const path = require('path')
 const { Utils } = require('zignis')
-const { components } = require('../../../..')
 const migration = require('../../../common/migration')
 
 exports.command = 'generate <dbKey> <tableName> [fieldName]'
@@ -30,7 +29,7 @@ exports.builder = function(yargs) {
 
 exports.handler = function(argv) {
   co(function*() {
-    const { db, config } = yield components()
+    const { db, config } = yield Utils.invokeHook('components')
     let dbInstance
     try {
       dbInstance = yield db.load(argv.dbKey)

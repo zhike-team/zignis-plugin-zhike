@@ -1,7 +1,6 @@
 const co = require('co')
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
-const { components } = require('../../../')
 const { Utils } = require('zignis')
 
 const format = function(file) {
@@ -90,7 +89,7 @@ exports.builder = function(yargs) {
 
 exports.handler = function(argv) {
   co(function*() {
-    const { db } = yield components()
+    const { db } = yield Utils.invokeHook('components')
     const transcodeDb = yield db.load('db.transcode', 'transcode')
     const { File } = transcodeDb.models
 

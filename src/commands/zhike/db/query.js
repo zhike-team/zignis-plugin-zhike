@@ -1,5 +1,4 @@
 const { Utils } = require('zignis')
-const { components } = require('../../../..')
 const co = require('co')
 const { parse, stringify } = require('node-sqlparser')
 
@@ -18,7 +17,7 @@ exports.builder = function(yargs) {
 
 exports.handler = function(argv) {
   co(function*() {
-    const { db } = yield components()
+    const { db } = yield Utils.invokeHook('components')
     let dbInstance
     try {
       dbInstance = yield db.load(argv.dbKey)

@@ -2,7 +2,6 @@
 const co = require('co')
 const OSS = require('ali-oss');
 const { Utils } = require('zignis')
-const { components } = require('../../../../')
 
 exports.command = 'list [marker]'
 exports.desc = 'list keys'
@@ -17,7 +16,7 @@ exports.builder = function (yargs) {
 exports.handler = function (argv) {
   co(function* () {
 
-    const { consul } = yield components()
+    const { consul } = yield Utils.invokeHook('components')
     const { oss } = yield consul.get('oss')
 
     const client = new OSS({

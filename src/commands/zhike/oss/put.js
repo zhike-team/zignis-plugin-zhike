@@ -3,7 +3,6 @@ const fs = require('fs')
 const co = require('co')
 const OSS = require('ali-oss');
 const { Utils } = require('zignis')
-const { components } = require('../../../../')
 
 exports.command = 'put <target> <files..>'
 exports.desc = 'upload files'
@@ -26,7 +25,7 @@ exports.handler = function (argv) {
       Utils.error('--prefix must be end with "/"')
     }
 
-    const { consul } = yield components()
+    const { consul } = yield Utils.invokeHook('components')
     const { oss } = yield consul.get('oss')
 
     const client = new OSS({

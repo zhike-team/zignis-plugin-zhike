@@ -1,6 +1,5 @@
 const co = require('co')
 const { Utils } = require('zignis')
-const { components } = require('../../../../')
 
 const getPostgresFieldsCommentContent = function*(db, tableName) {
   const result = yield db.query(
@@ -102,7 +101,7 @@ exports.builder = function(yargs) {
 
 exports.handler = function(argv) {
   co(function*() {
-    const { db, config } = yield components()
+    const { db, config } = yield Utils.invokeHook('components')
     let dbInstance
     try {
       dbInstance = yield db.load(argv.dbKey)

@@ -1,4 +1,3 @@
-const { components } = require('../../../')
 const { Utils } = require('zignis')
 
 const co = require('co')
@@ -10,7 +9,7 @@ exports.builder = function(yargs) {}
 
 exports.handler = function(argv) {
   co(function*() {
-    const { db } = yield components()
+    const { db } = yield Utils.invokeHook('components')
     const orderDb = yield db.load('db.order', 'order')
     const { Order, OrderProduct, OrderPromotion } = orderDb.models
 

@@ -3,7 +3,6 @@ const path = require('path')
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 const { Utils } = require('zignis')
-const { components } = require('../../../')
 
 exports.command = 'login <userId>'
 exports.desc = 'way to login zhike, <userId> could be user id, phone number or email'
@@ -31,7 +30,7 @@ const processSelectedUser = function(user) {
 
 exports.handler = function(argv) {
   co(function*() {
-    const { db } = yield components()
+    const { db } = yield Utils.invokeHook('components')
     const userDatabase = yield db.load('db.user', 'user', db.associate(path.resolve(__dirname, '../../models/user')))
     const { Account, Profile } = userDatabase.models
 

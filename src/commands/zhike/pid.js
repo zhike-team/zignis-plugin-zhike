@@ -1,6 +1,5 @@
 const co = require('co')
 const path = require('path')
-const { components } = require('../../../')
 const { Utils } = require('zignis')
 
 exports.command = 'pid <pid>'
@@ -16,7 +15,7 @@ exports.handler = function(argv) {
     Utils.error('Invalid pid')
   }
   co(function*() {
-    const { db } = yield components()
+    const { db } = yield Utils.invokeHook('components')
     const crmDb = yield db.load('db.crm2', 'crm', db.associate(path.resolve(__dirname, '../../models/crm2')))
     const {
       Crm2PidMap,
