@@ -2,8 +2,19 @@ const { Utils } = require('../../')
 
 module.exports = {
   hook_hook: {
-    cron: 'Hook triggered in zignis zhike cron command'
+    zhike_cron: 'Hook triggered in zignis zhike cron command'
   },
+  hook_new_repo: {
+    zignis_taro_starter: {
+      repo: 'http://code.smartstudy.com/zignis/zignis_taro_starter',
+      branch: 'master'
+    },
+    backend_scaffold: {
+      repo: 'http://code.smartstudy.com/service/backend-scaffold',
+      branch: 'master'
+    }
+  },
+
   /**
    * Implement hook: repl.
    * Add Zhike resources into Zignis REPL mode.
