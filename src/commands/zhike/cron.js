@@ -21,6 +21,10 @@ const shell = {
         const parts = action.split(/\s+/g)
         const { stdout } = yield execFile(parts[0], parts.slice(1), {})
         debug(stdout)
+      } else if (Utils._.isArray(action)) {
+        debug(`Action: [${action[0]} ${action[1].join(' ')}] executed!`)
+        const { stdout } = yield execFile(action[0], action[1], {})
+        debug(stdout)
       } else if (typeof action === 'function') {
         const name = action.name ? action.name : 'function'
         debug(`Action: [${name}] executed!`)
