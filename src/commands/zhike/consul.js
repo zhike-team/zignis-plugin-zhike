@@ -9,7 +9,7 @@ const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // devel
 const consulCachedKV = {}
 const consulCachedInstance = {}
 
-exports.command = 'consul [keys..]'
+exports.command = 'consul <keys..>'
 exports.desc = 'zhike consul config review'
 exports.aliases = 'config'
 

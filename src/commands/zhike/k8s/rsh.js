@@ -20,7 +20,9 @@ exports.command = 'rsh [keyword]'
 exports.desc = `k8s rsh pod`
 exports.aliases = ['bash', 'exec', 'sh']
 
-exports.builder = function(yargs) {}
+exports.builder = function(yargs) {
+  yargs.option('shell', { default: 'bash', describe: 'which shell container use, could be command or command path.' })
+}
 
 exports.handler = function(argv) {
   const namespace = argv.namespace
@@ -64,7 +66,7 @@ exports.handler = function(argv) {
     }
 
     if (filteredPods.length === 1) {
-      spawn(kubectl.binary, kubectl.generateCommandArgs(['exec', '-it', filteredPods.shift(), 'bash']), {
+      spawn(kubectl.binary, kubectl.generateCommandArgs(['exec', '-it', filteredPods.shift(), argv.shell ? argv.shell : 'bash']), {
         stdio: 'inherit'
       })
       return
@@ -97,7 +99,7 @@ exports.handler = function(argv) {
         }
       ])
       .then(function(answers) {
-        spawn(kubectl.binary, kubectl.generateCommandArgs(['exec', '-it', answers.selectedPod, 'bash']), {
+        spawn(kubectl.binary, kubectl.generateCommandArgs(['exec', '-it', answers.selectedPod, argv.shell ? argv.shell : 'bash']), {
           stdio: 'inherit'
         })
       })
