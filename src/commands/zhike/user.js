@@ -77,7 +77,7 @@ const processSelectedUser = function * (user, argv) {
         userAdaptationService.startAt,
         userAdaptationService.endAt,
         userAdaptationService.validity,
-        userAdaptationService.type,
+        {0: '试用', 1: '付费', 2: '测试'}[userAdaptationService.type],
         getMemberType(userAdaptationService)
       ])
     }
@@ -89,7 +89,7 @@ const processSelectedUser = function * (user, argv) {
 
     // 获取最近订单
 
-    const userOrders = yield API.get(`${atheneApiUrl}/api/order/list?page=1&pageSize=5&status=1&filterField=userId&filterValue=${user.id}`)
+    const userOrders = yield API.get(`${atheneApiUrl}/api/order/list?page=1&pageSize=5&status=1&filterField=userId&filterValue=${user.id}&noLoginTower=not_login_kktabcje1688fdiq`)
 
     if (userOrders.rows.length > 0) {
       Utils.info('最近订单：')
