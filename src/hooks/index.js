@@ -93,7 +93,7 @@ module.exports = {
     return Utils.co(function*() {
       const redis = yield ZhikeUtils.redisInstance()
 
-      const hookZhikeComponent = yield ZhikeUtils.invokeHook('zhike_component')
+      const hookZhikeComponent = yield Utils.invokeHook('zhike_component')
       return Object.assign({
         db: ZhikeUtils.dbForComponent,
         database: ZhikeUtils.dbForComponent,
