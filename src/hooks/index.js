@@ -1,8 +1,11 @@
-const { Utils } = require('../../')
+const { Utils: ZhikeUtils } = require('../../')
+const { Utils } = require('zignis')
 
 module.exports = {
   hook_hook: {
-    zhike_cron: 'Hook triggered in zignis zhike cron command'
+    zhike_cron: 'Hook triggered in zignis zhike cron command',
+    zhike_component: 'Hook triggered when zhike hook_components invoked ',
+    zhike_repl: 'Hook triggered when zhike hook_repl invoked '
   },
   hook_new_repo: {
     zignis_taro_starter: {
@@ -38,17 +41,18 @@ module.exports = {
    * @returns {object} Zhike resources, for now include consul, redis, db.
    */
   *hook_repl() {
-    const redis = yield Utils.redisInstance()
+    const redis = yield ZhikeUtils.redisInstance()
+    const hookZhikeRepl = yield Utils.invokeHook('zhike_repl')
     return {
-      zhike: {
-        db: Utils.dbForRepl,
-        database: Utils.dbForRepl,
+      zhike: Object.assign({
+        db: ZhikeUtils.dbForRepl,
+        database: ZhikeUtils.dbForRepl,
         redis,
         cache: redis,
-        config: Utils.config,
-        consul: Utils.config,
-        api: Utils.api('zignis-plugin-zhike')
-      }
+        config: ZhikeUtils.config,
+        consul: ZhikeUtils.config,
+        api: ZhikeUtils.api('zignis-plugin-zhike')
+      }, hookZhikeRepl)
     }
   },
 
@@ -87,16 +91,18 @@ module.exports = {
    */
   hook_components: () => {
     return Utils.co(function*() {
-      const redis = yield Utils.redisInstance()
-      return {
-        db: Utils.dbForComponent,
-        database: Utils.dbForComponent,
+      const redis = yield ZhikeUtils.redisInstance()
+
+      const hookZhikeComponent = yield ZhikeUtils.invokeHook('zhike_component')
+      return Object.assign({
+        db: ZhikeUtils.dbForComponent,
+        database: ZhikeUtils.dbForComponent,
         redis,
         cache: redis,
-        config: Utils.config,
-        consul: Utils.config,
-        api: Utils.api
-      }
+        config: ZhikeUtils.config,
+        consul: ZhikeUtils.config,
+        api: ZhikeUtils.api,
+      }, hookZhikeComponent)
     }).catch(e => {
       throw new Error(e.stack)
     })
