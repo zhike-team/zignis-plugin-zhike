@@ -92,7 +92,7 @@ exports.handler = function (argv) {
         name = filePath.substring(argv.prefix.length)
       }
       name = `${argv.target}/${name}`
-      const result = yield client.put(name, filePath)
+      const result = yield client.put(name, filePath, options)
       if (result && result.res) {
         if (result.res.status === 200) {
           Utils.log(`${Utils.chalk.cyan(filePath)} uploaded to ${Utils.chalk.cyan(name)} ${Utils.chalk.green('successfully!')}`)
