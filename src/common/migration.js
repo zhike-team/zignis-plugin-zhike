@@ -1,7 +1,6 @@
 const path = require('path')
 const fs = require('fs')
 const util = require('util')
-const _ = require('lodash')
 const beautify = require('js-beautify')
 const tosource = require('tosource')
 
@@ -68,32 +67,47 @@ const schemaInfo = {
   },
 
   isForeignKey: function(record, column) {
-    return _.isObject(record) && _.has(record, 'contype') && record.contype === 'f' && record.source_column === column
+    return (
+      Utils._.isObject(record) &&
+      Utils._.has(record, 'contype') &&
+      record.contype === 'f' &&
+      record.source_column === column
+    )
   },
 
   isUnique: function(record, column) {
-    return _.isObject(record) && _.has(record, 'contype') && record.contype === 'u' && record.source_column === column
+    return (
+      Utils._.isObject(record) &&
+      Utils._.has(record, 'contype') &&
+      record.contype === 'u' &&
+      record.source_column === column
+    )
   },
 
   isPrimaryKey: function(record, column) {
-    return _.isObject(record) && _.has(record, 'contype') && record.contype === 'p' && record.source_column === column
+    return (
+      Utils._.isObject(record) &&
+      Utils._.has(record, 'contype') &&
+      record.contype === 'p' &&
+      record.source_column === column
+    )
   },
 
   isSerialKey: function(record, column) {
     return (
-      _.isObject(record) &&
+      Utils._.isObject(record) &&
       schemaInfo.isPrimaryKey(record, column) &&
-      (_.has(record, 'extra') &&
-        _.startsWith(record.extra, 'nextval') &&
-        _.includes(record.extra, '_seq') &&
-        _.includes(record.extra, '::regclass'))
+      (Utils._.has(record, 'extra') &&
+        Utils._.startsWith(record.extra, 'nextval') &&
+        Utils._.includes(record.extra, '_seq') &&
+        Utils._.includes(record.extra, '::regclass'))
     )
   }
 }
 
 const genFieldType = function(_attr) {
   let val
-  _attr = _.lowerCase(_attr)
+  _attr = Utils._.lowerCase(_attr)
   if (_attr === 'boolean' || _attr === 'bit(1)' || _attr === 'bit') {
     val = 'Sequelize.BOOLEAN'
   } else if (_attr.match(/^(smallint|mediumint|tinyint|int)/)) {
@@ -101,7 +115,7 @@ const genFieldType = function(_attr) {
     if (length) {
       length = length[0]
     }
-    val = 'Sequelize.INTEGER' + (!_.isNull(length) ? `(${length})` : '')
+    val = 'Sequelize.INTEGER' + (!Utils._.isNull(length) ? `(${length})` : '')
 
     let unsigned = _attr.match(/unsigned/i)
     if (unsigned) val += '.UNSIGNED'
@@ -115,7 +129,7 @@ const genFieldType = function(_attr) {
     if (length) {
       length = length[0]
     }
-    val = 'Sequelize.STRING' + (!_.isNull(length) && length != 255 ? `(${length})` : '')
+    val = 'Sequelize.STRING' + (!Utils._.isNull(length) && length != 255 ? `(${length})` : '')
   } else if (_attr.match(/^string|letying|nletchar/)) {
     val = 'Sequelize.STRING'
   } else if (_attr.match(/^char/)) {
@@ -123,7 +137,7 @@ const genFieldType = function(_attr) {
     if (length) {
       length = length[0]
     }
-    val = 'Sequelize.CHAR' + (!_.isNull(length) && length != 255 ? `(${length})` : '')
+    val = 'Sequelize.CHAR' + (!Utils._.isNull(length) && length != 255 ? `(${length})` : '')
   } else if (_attr.match(/^real/)) {
     val = 'Sequelize.REAL'
   } else if (_attr.match(/text|ntext$/)) {
@@ -169,8 +183,8 @@ const validateDataType = function(dataType, sequelize) {
 const formatAttributes = function(attribute) {
   let result
   const split = attribute.split(':')
-  const validAttributeFunctionType = 'array';
-  
+  const validAttributeFunctionType = 'array'
+
   if (split.length === 2) {
     result = { fieldName: split[0], dataType: split[1], dataFunction: null }
   } else if (split.length === 3) {
@@ -269,7 +283,7 @@ const genAttrForOneTable = function*(table, sequelize, dbConfig, options) {
         attr.defaultValue = null
       }
 
-      if (_.has(attr, 'primaryKey') && !attr.primaryKey) {
+      if (Utils._.has(attr, 'primaryKey') && !attr.primaryKey) {
         delete attr.primaryKey
       }
       if (Array.isArray(attr.special) && attr.special.length === 0) {
@@ -355,7 +369,7 @@ exports.genMigrationForField = function*(table, field, sequelize, dbConfig, opti
             Utils.error(`No such field: ${table}.${field} in options.attributes`)
           }
           attrStr = tosource(optionAttrs[field]).replace(/"(Sequelize(.*?))"/g, '$1')
-          
+
           up = util.format(CREATE_FIELD_TEMPLATE, table, field, attrStr)
           down = util.format(DROP_FIELD_TEMPLATE, table, field)
         } else {
@@ -368,8 +382,6 @@ exports.genMigrationForField = function*(table, field, sequelize, dbConfig, opti
           }
         }
       }
-
-      
     }
   }
 

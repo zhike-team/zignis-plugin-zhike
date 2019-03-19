@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize')
-const _ = require('lodash')
+const { Utils } = require('zignis')
 const co = require('co')
 const fs = require('fs')
 const consulCommand = require('../commands/zhike/consul')
@@ -23,19 +23,18 @@ class DatabaseLoader {
 
   /**
    * 获取数据库配置，可以直接被 Sequelize CLI 解析
-   * @param {string|array} consulKey 
+   * @param {string|array} consulKey
    */
   config(consulKey) {
     return co(function*() {
       let dbConfig
-      if (_.isObject(consulKey)) {
+      if (Utils._.isObject(consulKey)) {
         dbConfig = consulKey
-
       } else {
         const { result } = yield consulCommand.handler({ keys: [consulKey], silent: true })
-        dbConfig = _.get(result, consulKey)
+        dbConfig = Utils._.get(result, consulKey)
       }
-      
+
       if (!dbConfig) {
         throw new Error('consulKey not exist')
       }
@@ -54,9 +53,9 @@ class DatabaseLoader {
 
   /**
    * 实例化数据库连接，数据库配置可以从 consul 取，也可以直接传给 load 方法
-   * @param {string|array} consulKey 
-   * @param {string} instanceKey 
-   * @param {function} callback 
+   * @param {string|array} consulKey
+   * @param {string} instanceKey
+   * @param {function} callback
    */
   load(consulKey, instanceKey = '', callback) {
     let that = this
@@ -69,17 +68,16 @@ class DatabaseLoader {
       }
 
       let dbConfig
-      if (_.isObject(consulKey)) {
+      if (Utils._.isObject(consulKey)) {
         if (!instanceKey) {
           throw new Error('The second parameter:instanceKey is required!')
         }
         dbConfig = consulKey
-
       } else {
         const { result } = yield consulCommand.handler({ keys: [consulKey], silent: true })
-        dbConfig = _.get(result, consulKey)
+        dbConfig = Utils._.get(result, consulKey)
       }
-      
+
       if (!dbConfig) {
         throw new Error('consulKey not exist')
       }
@@ -126,7 +124,7 @@ class DatabaseLoader {
         })
       )
 
-      const combinedTableInfos = _.zipObject(tables, tableInfos)
+      const combinedTableInfos = Utils._.zipObject(tables, tableInfos)
       Object.keys(combinedTableInfos).forEach(table => {
         const tableInfo = combinedTableInfos[table]
         const newTableInfo = {}
@@ -137,7 +135,7 @@ class DatabaseLoader {
           })
 
           tableInfo[field].field = field
-          // for PG, check autoIncrement rule 
+          // for PG, check autoIncrement rule
           if (/^nextval\(.*?::regclass\)$/.test(tableInfo[field].defaultValue)) {
             delete tableInfo[field].defaultValue
             tableInfo[field].autoIncrement = true
@@ -188,9 +186,9 @@ class DatabaseLoader {
         } catch (e) {}
       })
 
-      if (_.isFunction(callback)) {
+      if (Utils._.isFunction(callback)) {
         callback(sequelize)
-      } else if (_.isString(callback)) {
+      } else if (Utils._.isString(callback)) {
         // implicitly means to call this.associate, and callback is actually modealPath
         this.associate(callback)(sequelize)
       }
@@ -205,7 +203,7 @@ class DatabaseLoader {
 
   /**
    * 处理模型的关联关系
-   * @param {string} modelPath 
+   * @param {string} modelPath
    */
   associate(modelPath) {
     return function(sequelize) {

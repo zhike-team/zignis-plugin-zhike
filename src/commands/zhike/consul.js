@@ -1,5 +1,4 @@
 const co = require('co')
-const _ = require('lodash')
 const Consul = require('zhike-consul')
 const consulConfig = require('../../../consul.json')
 const { Utils } = require('zignis')
@@ -66,7 +65,7 @@ exports.handler = function(argv) {
 
     const pickNeededFromPull = {}
     argv.keys.map(key => {
-      _.set(pickNeededFromPull, key, _.get(data.CFG, key))
+      Utils._.set(pickNeededFromPull, key, Utils._.get(data.CFG, key))
     })
 
     if (!argv.silent) {

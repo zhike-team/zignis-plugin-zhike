@@ -1,5 +1,5 @@
 const spawn = require('child_process').spawn
-const _ = require('lodash')
+const { Utils } = require('zignis')
 
 class Kubectl {
   constructor(type, conf) {
@@ -76,7 +76,7 @@ class Kubectl {
   }
 
   callbackFunction(primise, callback) {
-    if (_.isFunction(callback)) {
+    if (Utils._.isFunction(callback)) {
       primise
         .then(data => {
           callback(null, data)
@@ -88,15 +88,13 @@ class Kubectl {
   }
 
   command(cmd, callback) {
-    if (_.isString(cmd)) cmd = cmd.split(' ')
+    if (Utils._.isString(cmd)) cmd = cmd.split(' ')
 
     const promise = new Promise((resolve, reject) => {
       this.spawn(cmd, function(err, data) {
         if (err) return reject(err || data)
 
-        resolve(
-          cmd.join(' ').indexOf('--output=json') > -1 ? JSON.parse(data) : data
-        )
+        resolve(cmd.join(' ').indexOf('--output=json') > -1 ? JSON.parse(data) : data)
       })
     })
 
@@ -119,7 +117,7 @@ class Kubectl {
       selector = '--output=json'
     }
 
-    if (_.isFunction(flags)) {
+    if (Utils._.isFunction(flags)) {
       done = flags
       flags = null
     }
@@ -134,7 +132,7 @@ class Kubectl {
   get(name, flags, done) {
     if (!this.type) throw new Error('not a function')
 
-    if (_.isFunction(flags)) {
+    if (Utils._.isFunction(flags)) {
       done = flags
       flags = null
     }
@@ -149,7 +147,7 @@ class Kubectl {
   create(filepath, flags, done) {
     if (!this.type) throw new Error('not a function')
 
-    if (_.isFunction(flags)) {
+    if (Utils._.isFunction(flags)) {
       done = flags
       flags = null
     }
@@ -164,7 +162,7 @@ class Kubectl {
   delete(id, flags, done) {
     if (!this.type) throw new Error('not a function')
 
-    if (_.isFunction(flags)) {
+    if (Utils._.isFunction(flags)) {
       done = flags
       flags = null
     }
@@ -179,7 +177,7 @@ class Kubectl {
   update(filepath, flags, done) {
     if (!this.type) throw new Error('not a function')
 
-    if (_.isFunction(flags)) {
+    if (Utils._.isFunction(flags)) {
       done = flags
       flags = null
     }
@@ -194,80 +192,56 @@ class Kubectl {
   apply(name, json, flags, done) {
     if (!this.type) throw new Error('not a function')
 
-    if (_.isFunction(flags)) {
+    if (Utils._.isFunction(flags)) {
       done = flags
       flags = null
     }
 
     flags = flags || []
-    const action = [
-      'update',
-      this.type,
-      name,
-      '--patch=' + JSON.stringify(json)
-    ].concat(flags)
+    const action = ['update', this.type, name, '--patch=' + JSON.stringify(json)].concat(flags)
 
     return this.command(action, done)
   }
 
   rollingUpdateByFile(name, filepath, flags, done) {
-    if (this.type !== 'replicationcontrollers')
-      throw new Error('not a function')
+    if (this.type !== 'replicationcontrollers') throw new Error('not a function')
 
-    if (_.isFunction(flags)) {
+    if (Utils._.isFunction(flags)) {
       done = flags
       flags = null
     }
 
     flags = flags || []
-    const action = [
-      'rolling-update',
-      name,
-      '-f',
-      filepath,
-      '--update-period=0s'
-    ].concat(flags)
+    const action = ['rolling-update', name, '-f', filepath, '--update-period=0s'].concat(flags)
 
     return this.command(action, done)
   }
 
   rollingUpdate(name, image, flags, done) {
-    if (this.type !== 'replicationcontrollers')
-      throw new Error('not a function')
+    if (this.type !== 'replicationcontrollers') throw new Error('not a function')
 
-    if (_.isFunction(flags)) {
+    if (Utils._.isFunction(flags)) {
       done = flags
       flags = null
     }
 
     flags = flags || []
 
-    const action = [
-      'rolling-update',
-      name,
-      '--image=' + image,
-      '--update-period=0s'
-    ].concat(flags)
+    const action = ['rolling-update', name, '--image=' + image, '--update-period=0s'].concat(flags)
 
     return this.command(action, done)
   }
 
   scale(name, replicas, flags, done) {
-    if (this.type !== 'replicationcontrollers' && this.type !== 'deployments')
-      throw new Error('not a function')
+    if (this.type !== 'replicationcontrollers' && this.type !== 'deployments') throw new Error('not a function')
 
-    if (_.isFunction(flags)) {
+    if (Utils._.isFunction(flags)) {
       done = flags
       flags = null
     }
 
     flags = flags || []
-    const action = [
-      'scale',
-      '--replicas=' + replicas,
-      'replicationcontrollers',
-      name
-    ].concat(flags)
+    const action = ['scale', '--replicas=' + replicas, 'replicationcontrollers', name].concat(flags)
 
     return this.command(action, done)
   }
@@ -285,7 +259,7 @@ class Kubectl {
       action.push(name)
     }
 
-    if (_.isFunction(flags)) {
+    if (Utils._.isFunction(flags)) {
       done = flags
       flags = null
     }
@@ -304,7 +278,7 @@ class Kubectl {
       action.push(name)
     }
 
-    if (_.isFunction(flags)) {
+    if (Utils._.isFunction(flags)) {
       done = flags
       flags = null
     }

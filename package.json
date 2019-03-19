@@ -21,7 +21,6 @@
     "is-reachable": "^3.0.0",
     "js-beautify": "^1.8.8",
     "k8s": "^0.4.15",
-    "lodash": "^4.17.10",
     "mysql2": "^1.6.1",
     "node-cron": "^2.0.3",
     "node-sqlparser": "^1.0.4",
