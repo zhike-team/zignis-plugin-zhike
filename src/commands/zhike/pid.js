@@ -43,6 +43,10 @@ exports.handler = function(argv) {
         ]
       })
 
+      if (!pid) {
+        Utils.error('Invalid pid')
+      }
+
       const keys = Object.keys(pid)
       const outputTable = [keys]
       outputTable.push(
