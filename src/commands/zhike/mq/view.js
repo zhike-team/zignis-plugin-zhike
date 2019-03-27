@@ -1,6 +1,6 @@
 
 const { Utils } = require('zignis')
-const MQ = require('../../../common/mq')
+const mq = require('../../../common/mq')
 
 exports.command = 'view <queueName>'
 exports.desc = 'view queue attributes'
@@ -13,8 +13,7 @@ exports.builder = function (yargs) {
 
 exports.handler = async function (argv) {
 
-  const mq = new MQ(argv.queueName)
-  const queue = await mq.connect()
+  const queue = await mq(argv.queueName)
   const attrs = await queue.getAttrsP()
 
   const rows = [[Utils.chalk.green('Key'), Utils.chalk.green('Value'), Utils.chalk.green('Description')]]

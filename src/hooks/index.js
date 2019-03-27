@@ -51,7 +51,8 @@ module.exports = {
         cache: redis,
         config: ZhikeUtils.config,
         consul: ZhikeUtils.config,
-        api: ZhikeUtils.api('zignis-plugin-zhike')
+        api: ZhikeUtils.api('zignis-plugin-zhike'),
+        mq: ZhikeUtils.mq,
       }, hookZhikeRepl)
     }
   },
@@ -102,6 +103,7 @@ module.exports = {
         config: ZhikeUtils.config,
         consul: ZhikeUtils.config,
         api: ZhikeUtils.api,
+        mq: ZhikeUtils.mq,
       }, hookZhikeComponent)
     }).catch(e => {
       throw new Error(e.stack)

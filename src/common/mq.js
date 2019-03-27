@@ -1,24 +1,23 @@
 const AliMNS = require('ali-mns')
 const { Utils } = require('zignis')
 
-class MQ {
-  constructor(queueName) {
-    this.queueName = queueName
+const queues = {}
+const mq = async (queueName) => {
+  if (queues[queueName]) {
+    return queues[queueName]
   }
 
-  async connect() {
-    const { consul } = await Utils.invokeHook('components')
-    const config = await consul.get('mq')
+  const { consul } = await Utils.invokeHook('components')
+  const config = await consul.get('mq')
 
-    const accountId = config.mq.aliMns.accountId
-    const accessKeyId = config.mq.aliMns.accessKeyId
-    const accessKeySecret = config.mq.aliMns.accessKeySecret
-    const account = new AliMNS.Account(accountId, accessKeyId, accessKeySecret)
+  const accountId = config.mq.aliMns.accountId
+  const accessKeyId = config.mq.aliMns.accessKeyId
+  const accessKeySecret = config.mq.aliMns.accessKeySecret
+  const account = new AliMNS.Account(accountId, accessKeyId, accessKeySecret)
 
-    const queue = new AliMNS.MQ(config.mq.aliMns[this.queueName].name, account, config.mq.aliMns[this.queueName].region)
+  queues[queueName] = new AliMNS.MQ(config.mq.aliMns[queueName].name, account, config.mq.aliMns[queueName].region)
 
-    return queue
-  }
+  return queues[queueName]
 }
 
-module.exports = MQ
+module.exports = mq

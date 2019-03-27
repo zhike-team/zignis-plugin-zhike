@@ -1,6 +1,6 @@
 
 const { Utils } = require('zignis')
-const MQ = require('../../../common/mq')
+const mq = require('../../../common/mq')
 
 exports.command = 'peek <queueName>'
 exports.desc = 'show top message on the queue'
@@ -12,11 +12,10 @@ exports.builder = function (yargs) {
 }
 
 exports.handler = async function (argv) {
-  const mq = new MQ(argv.queueName)
+  const queue = await mq(argv.queueName)
 
   let ret
   try {
-    const queue = await mq.connect()
     ret = await queue.peekP(1)
   } catch (e) {
     Utils.error(e.Error.Message)

@@ -2,6 +2,7 @@ const Redis = require('ioredis')
 const { Utils } = require('zignis')
 const debug = Utils.debug('zignis-plugin-zhike:utils')
 
+const mq = require('./mq')
 const consulCommand = require('../commands/zhike/consul')
 const DatabaseLoader = require('./db')
 const dbForComponent = new DatabaseLoader({ loadReturnInstance: true })
@@ -69,5 +70,6 @@ module.exports = {
   redisInstance,
   config,
   api,
+  mq,
   co
 }
