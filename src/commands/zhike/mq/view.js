@@ -2,7 +2,7 @@
 const { Utils } = require('zignis')
 const mq = require('../../../common/mq')
 
-exports.command = 'view <queueName>'
+exports.command = 'view <queueName> [key]'
 exports.desc = 'view queue attributes'
 // exports.aliases = ''
 
@@ -15,6 +15,11 @@ exports.handler = async function (argv) {
 
   const queue = await mq(argv.queueName)
   const attrs = await queue.getAttrsP()
+
+  if (argv.key && attrs.Queue[argv.key]) {
+    console.log(attrs.Queue[argv.key])
+    process.exit(0)
+  }
 
   const rows = [[Utils.chalk.green('Key'), Utils.chalk.green('Value'), Utils.chalk.green('Description')]]
 
