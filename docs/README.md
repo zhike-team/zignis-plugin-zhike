@@ -73,6 +73,10 @@ pid 命令用于查看 Zhike pid 的详细信息
 
 oss 命令用于操作 oss，实现了上传，下载和列表等功能
 
+**zignis zhike mq**
+
+mq 命令用于操作智课的阿里云 mq，实现了列表，查看和取头部 message，支持 REPL 和 hook_components
+
 **zignis zhike cron**
 
 cron 命令用于执行项目的计划任务，具体的计划任务是以 node 模块的形式存在的，计划任务存放目录在项目的 `.zignisrc.json` 文件中声明 `cronDir`，目录必须存在。计划任务文件格式如下：
