@@ -6,8 +6,7 @@ exports.desc = 'zhike oss tools'
 // exports.aliases = ''
 
 exports.builder = function (yargs) {
-  Utils.extendSubCommand('oss', 'zignis-plugin-zhike', yargs, __dirname)
-  // yargs.option('option', {default, describe, alias})
+  Utils.extendSubCommand('zhike/oss', 'zignis-plugin-zhike', yargs, __dirname)
 }
 
 exports.handler = function (argv) {

@@ -7,7 +7,7 @@ exports.desc = 'zhike mq tools'
 
 exports.builder = function (yargs) {
   // yargs.option('option', { default, describe, alias })
-  yargs.commandDir('mq')
+  Utils.extendSubCommand('zhike/mq', 'zignis-plugin-zhike', yargs, __dirname)
 }
 
 exports.handler = async function (argv) {
