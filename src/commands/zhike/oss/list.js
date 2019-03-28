@@ -1,6 +1,5 @@
 
-const co = require('co')
-const OSS = require('ali-oss');
+const oss = require('../../../common/oss')
 const { Utils } = require('zignis')
 
 exports.command = 'list [marker]'
@@ -14,18 +13,9 @@ exports.builder = function (yargs) {
 }
 
 exports.handler = function (argv) {
-  co(function* () {
-
-    const { consul } = yield Utils.invokeHook('components')
-    const { oss } = yield consul.get('oss')
-
-    const client = new OSS({
-      accessKeyId: oss.key,
-      accessKeySecret: oss.secret,
-      endpoint: oss.endpoint,
-      bucket: oss.bucket,
-
-    })
+  argv.prefix = argv.prefix ? argv.prefix.replace(/^\/+/, '') : ''
+  return Utils.co(function* () {
+    const client = yield oss()
 
     let result
     let pages = Math.max(1, argv.pages)

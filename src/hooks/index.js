@@ -41,18 +41,18 @@ module.exports = {
    * @returns {object} Zhike resources, for now include consul, redis, db.
    */
   *hook_repl() {
-    const redis = yield ZhikeUtils.redisInstance()
     const hookZhikeRepl = yield Utils.invokeHook('zhike_repl')
     return {
       zhike: Object.assign({
         db: ZhikeUtils.dbForRepl,
         database: ZhikeUtils.dbForRepl,
-        redis,
-        cache: redis,
+        redis: ZhikeUtils.redis,
+        cache: ZhikeUtils.redis,
         config: ZhikeUtils.config,
         consul: ZhikeUtils.config,
         api: ZhikeUtils.api('zignis-plugin-zhike'),
         mq: ZhikeUtils.mq,
+        oss: ZhikeUtils.oss,
       }, hookZhikeRepl)
     }
   },
@@ -92,18 +92,17 @@ module.exports = {
    */
   hook_components: () => {
     return Utils.co(function*() {
-      const redis = yield ZhikeUtils.redisInstance()
-
       const hookZhikeComponent = yield Utils.invokeHook('zhike_component')
       return Object.assign({
         db: ZhikeUtils.dbForComponent,
         database: ZhikeUtils.dbForComponent,
-        redis,
-        cache: redis,
+        redis: ZhikeUtils.redis,
+        cache: ZhikeUtils.redis,
         config: ZhikeUtils.config,
         consul: ZhikeUtils.config,
         api: ZhikeUtils.api,
         mq: ZhikeUtils.mq,
+        oss: ZhikeUtils.oss,
       }, hookZhikeComponent)
     }).catch(e => {
       throw new Error(e.stack)

@@ -3,6 +3,7 @@ const { Utils } = require('zignis')
 const debug = Utils.debug('zignis-plugin-zhike:utils')
 
 const mq = require('./mq')
+const oss = require('./oss')
 const consulCommand = require('../commands/zhike/consul')
 const DatabaseLoader = require('./db')
 const dbForComponent = new DatabaseLoader({ loadReturnInstance: true })
@@ -68,8 +69,10 @@ module.exports = {
   dbForComponent,
   dbForRepl,
   redisInstance,
+  redis: redisInstance,
   config,
   api,
   mq,
+  oss,
   co
 }

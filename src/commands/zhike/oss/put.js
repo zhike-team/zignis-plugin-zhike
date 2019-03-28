@@ -1,6 +1,5 @@
 const path = require('path')
 const fs = require('fs')
-const co = require('co')
 const OSS = require('ali-oss');
 const { Utils } = require('zignis')
 
@@ -20,9 +19,13 @@ exports.builder = function (yargs) {
 }
 
 exports.handler = function (argv) {
-  co(function* () {
+  return Utils.co(function* () {
     if (argv.prefix && argv.prefix[argv.prefix.length - 1] !== '/') {
       Utils.error('--prefix must be end with "/"')
+    }
+
+    if (argv.target && argv.target[argv.target.length - 1] !== '/') {
+      argv.target = `${argv.target}/`
     }
 
     const { consul } = yield Utils.invokeHook('components')
@@ -91,7 +94,7 @@ exports.handler = function (argv) {
       if (argv.prefix) {
         name = filePath.substring(argv.prefix.length)
       }
-      name = `${argv.target}/${name}`
+      name = `${argv.target}${name}`
       const result = yield client.put(name, filePath, options)
       if (result && result.res) {
         if (result.res.status === 200) {

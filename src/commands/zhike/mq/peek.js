@@ -11,17 +11,19 @@ exports.builder = function (yargs) {
   // yargs.commandDir('peek')
 }
 
-exports.handler = async function (argv) {
-  const queue = await mq(argv.queueName)
+exports.handler = function (argv) {
+  return Utils.co(function * () {
+    const queue = yield mq(argv.queueName)
 
-  let ret
-  try {
-    ret = await queue.peekP(1)
-  } catch (e) {
-    Utils.error(e.Error.Message)
-  }
+    let ret
+    try {
+      ret = yield queue.peekP(1)
+    } catch (e) {
+      Utils.error(e.Error.Message)
+    }
 
-  Utils.log(ret)
+    Utils.log(ret)
 
-  process.exit(0)
+    process.exit(0)
+  }).catch((e) => Utils.error(e.stack))
 }
