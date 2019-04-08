@@ -17,8 +17,12 @@ class DatabaseLoader {
     this.instances = {}
   }
 
-  get() {
-    return this.instances
+  get Sequelize() {
+    return Sequelize
+  }
+
+  get Op() {
+    return Sequelize.Op
   }
 
   /**
