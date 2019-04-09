@@ -194,7 +194,7 @@ class DatabaseLoader {
         callback(sequelize)
       } else if (Utils._.isString(callback)) {
         // implicitly means to call this.associate, and callback is actually modealPath
-        this.associate(callback)(sequelize)
+        that.associate(callback)(sequelize)
       }
 
       if (that.options.loadReturnInstance) {
@@ -214,7 +214,15 @@ class DatabaseLoader {
       Object.keys(sequelize.models).forEach(modelName => {
         if (fs.existsSync(`${modelPath}/${modelName}.js`)) {
           let model = sequelize.models[modelName]
-          require(`${modelPath}/${modelName}`).bind(model)(sequelize.models)
+          let modelExtend = require(`${modelPath}/${modelName}`)
+          if (Utils._.isFunction(modelExtend)) {
+            const ret = modelExtend.bind(model)(sequelize.models, sequelize)
+            if (ret) {
+              sequelize.models[modelName] = ret
+            }
+          } else {
+            throw new Error('Model extension must be a function.')
+          }
         }
       })
     }
