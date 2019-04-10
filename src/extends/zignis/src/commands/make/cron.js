@@ -19,7 +19,7 @@ exports.handler = function(argv) {
   const filePrefix = Utils.day().format('YYYYMMDDHHmmssSSS')
   const cronFile = path.resolve(argv.cronDir, `${filePrefix}_${Utils._.kebabCase(argv.name)}.js`)
   if (fs.existsSync(cronFile)) {
-    console.log(Utils.chalk.red('Scritp file exist!'))
+    console.log(Utils.chalk.red('Script file exist!'))
     return
   }
 
