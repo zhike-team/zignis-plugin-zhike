@@ -8,12 +8,28 @@ module.exports = {
     zhike_repl: 'Hook triggered when zhike hook_repl invoked '
   },
   hook_new_repo: {
+    'zignis-taro-starter': {
+      repo: 'git@code.smartstudy.com:zignis/zignis_taro_starter.git',
+      branch: 'master'
+    },
     zignis_taro_starter: {
-      repo: 'http://code.smartstudy.com/zignis/zignis_taro_starter',
+      repo: 'git@code.smartstudy.com:zignis/zignis_taro_starter.git',
+      branch: 'master'
+    },
+    'zignis-backend-starter': {
+      repo: 'git@code.smartstudy.com:zignis/zignis-backend-starter.git',
+      branch: 'master'
+    },
+    zignis_backend_starter: {
+      repo: 'git@code.smartstudy.com:zignis/zignis-backend-starter.git',
+      branch: 'master'
+    },
+    'backend-scaffold': {
+      repo: 'git@code.smartstudy.com:service/backend-scaffold.git',
       branch: 'master'
     },
     backend_scaffold: {
-      repo: 'http://code.smartstudy.com/service/backend-scaffold',
+      repo: 'git@code.smartstudy.com:service/backend-scaffold.git',
       branch: 'master'
     }
   },

@@ -82,10 +82,11 @@ exports.handler = function(argv) {
     }
 
     const { redis } = yield Utils.invokeHook('components')
+    const redisInstance = yield redis()
 
     // Redis锁，加锁
     const lock = function*(redisKey, redisValue, timeout) {
-      return yield redis.eval(
+      return yield redisInstance.eval(
         'return redis.call("set", KEYS[1], ARGV[1], "NX", "PX", ARGV[2])',
         1,
         redisKey,
@@ -96,7 +97,7 @@ exports.handler = function(argv) {
 
     // Redis锁，解锁
     const unlock = function*(redisKey, redisValue) {
-      return yield redis.eval(
+      return yield redisInstance.eval(
         'if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("del", KEYS[1]) else return 0 end',
         1,
         redisKey,
