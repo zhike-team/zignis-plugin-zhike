@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const { Utils } = require('zignis')
 
-exports.command = 'cron [name]'
+exports.command = 'cron <name>'
 exports.desc = 'Generate a zignis cron job file'
 // exports.alias = ''
 
