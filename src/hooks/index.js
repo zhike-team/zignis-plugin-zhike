@@ -8,37 +8,25 @@ module.exports = {
     zhike_repl: 'Hook triggered when zhike hook_repl invoked '
   },
   hook_new_repo: {
-    'zignis-taro-starter': {
-      repo: 'git@code.smartstudy.com:zignis/zignis_taro_starter.git',
-      branch: 'master'
-    },
     zignis_taro_starter: {
       repo: 'git@code.smartstudy.com:zignis/zignis_taro_starter.git',
-      branch: 'master'
-    },
-    'weapp-starter': {
-      repo: 'git@code.smartstudy.com:weixin_app/weapp_starter.git',
-      branch: 'master'
+      branch: 'master',
+      alias: ['zignis-taro-starter', 'taro']
     },
     weapp_starter: {
       repo: 'git@code.smartstudy.com:weixin_app/weapp_starter.git',
-      branch: 'master'
-    },
-    'zignis-backend-starter': {
-      repo: 'git@code.smartstudy.com:zignis/zignis-backend-starter.git',
-      branch: 'master'
+      branch: 'master',
+      alias: ['weapp-starter']
     },
     zignis_backend_starter: {
       repo: 'git@code.smartstudy.com:zignis/zignis-backend-starter.git',
-      branch: 'master'
-    },
-    'backend-scaffold': {
-      repo: 'git@code.smartstudy.com:service/backend-scaffold.git',
-      branch: 'master'
+      branch: 'master',
+      alias: ['zignis-backend-starter', 'zignis-backend', 'zignis_backend']
     },
     backend_scaffold: {
       repo: 'git@code.smartstudy.com:service/backend-scaffold.git',
-      branch: 'master'
+      branch: 'master',
+      alias: ['backend-scaffold']
     }
   },
 

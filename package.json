@@ -35,7 +35,7 @@
     "zhike-consul": "^1.0.12"
   },
   "peerDependencies": {
-    "zignis": "^1.3.3"
+    "zignis": "^1.3.4"
   },
   "devDependencies": {
     "documentation": "^8.1.2"
