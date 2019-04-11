@@ -16,6 +16,14 @@ module.exports = {
       repo: 'git@code.smartstudy.com:zignis/zignis_taro_starter.git',
       branch: 'master'
     },
+    'weapp-starter': {
+      repo: 'git@code.smartstudy.com:weixin_app/weapp_starter.git',
+      branch: 'master'
+    },
+    weapp_starter: {
+      repo: 'git@code.smartstudy.com:weixin_app/weapp_starter.git',
+      branch: 'master'
+    },
     'zignis-backend-starter': {
       repo: 'git@code.smartstudy.com:zignis/zignis-backend-starter.git',
       branch: 'master'
