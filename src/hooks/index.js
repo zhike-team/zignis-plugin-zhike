@@ -136,9 +136,10 @@ module.exports = {
     ]
 
     return {
-      zignisPluginTen: function (argv) {
-        console.log(argv)
-        if (argv.disableTenTemporarily || argv.execMode) {
+      zignisPluginTen: function (argv, yargs) {
+        yargs.default('disable-ten-temporarily')
+        const config = Utils.getCombinedConfig()
+        if (argv.disableTenTemporarily || config.disableTenTemporarily || argv.execMode) {
           return
         }
 

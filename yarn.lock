@@ -5801,10 +5801,10 @@ zhike-consul@^1.0.12:
     bluebird "^3.4.6"
     consul "^0.27.0"
 
-zignis@^1.3.4:
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/zignis/-/zignis-1.3.4.tgz#b54de036ab4ed736ba48a91fbc7d8f32aa114031"
-  integrity sha512-hcVpHeQJlPuGjfFLTdBcRRXtpxefszsYPf29hiJAJi37KlZa65u1z0JCOQKMTNOgszEKIKSABir1wHlNQ5Ie+w==
+zignis@^1.3.8:
+  version "1.3.8"
+  resolved "https://registry.yarnpkg.com/zignis/-/zignis-1.3.8.tgz#21ac0871949280e047b058e59e92b54ce2f7fafa"
+  integrity sha512-UDkyWBEKZkcijuFFSrKSle8Ge6S1EzK53s2hKkUU2MwZQ4ZG6XSrcTsM4D+kssebKRz6rJ3LL8t2z/ODthwTTQ==
   dependencies:
     chalk "^2.4.1"
     co "^4.6.0"
