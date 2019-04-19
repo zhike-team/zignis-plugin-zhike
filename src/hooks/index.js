@@ -137,6 +137,7 @@ module.exports = {
 
     return {
       zignisPluginTen: function (argv) {
+        console.log(argv)
         if (argv.disableTenTemporarily || argv.execMode) {
           return
         }
