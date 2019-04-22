@@ -191,7 +191,7 @@ class DatabaseLoader {
       })
 
       if (Utils._.isFunction(callback)) {
-        callback(sequelize)
+        callback(sequelize.models, sequelize)
       } else if (Utils._.isString(callback)) {
         // implicitly means to call this.associate, and callback is actually modealPath
         that.associate(callback)(sequelize)

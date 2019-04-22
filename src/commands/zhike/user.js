@@ -89,19 +89,28 @@ const processSelectedUser = function * (user, argv) {
 
     // 获取最近订单
 
+    const atheneDb = yield db.load('db.athene', 'atheneDb')
+    const { UserServicePack } = atheneDb.models
+
     const userOrders = yield API.get(`${atheneApiUrl}/api/order/list?page=1&pageSize=5&status=1&filterField=userId&filterValue=${user.id}&noLoginTower=not_login_kktabcje1688fdiq`)
 
     if (userOrders.rows.length > 0) {
       Utils.info('最近订单：')
-      const headers = ['订单号', '订单类型', '订单平台', '订单来源', '商品名称', '订单金额', '实际支付', '支付方式', '下单时间', '支付状态']
+      const headers = ['订单号', '订单类型', '订单平台', '订单来源', '(ProductId / ServicePackId) - 商品名称', '订单金额', '实际支付', '支付方式', '下单时间', '支付状态']
       const rows = [headers]
-      userOrders.rows.map(record => {
+      for (let record of userOrders.rows) {
+        const servicePack = yield UserServicePack.findOne({
+          where: {
+            orderId: record.id
+          }
+        })
+
         rows.push([
           record.id,
           record.type == 1 ? '商品订单' : '充值订单',
           record.plat == 1 ? '网站' : (record.plat == 2 ? 'app' : '线下'),
           record.source,
-          record.products.map(p => `(${p.productId})-${p.productName}`).join(', '),
+          record.products.map(p => `(${p.productId}${servicePack ? ' / ' + servicePack.id : ''}) - ${p.productName}`).join(', '),
           record.totalAmount,
           record.paymentMoney,
           record.payments.map(p => p.methodName).join(', '),
@@ -116,7 +125,7 @@ const processSelectedUser = function * (user, argv) {
             record.status == 8 ? '已作废' : '部分退款'
           
         ])
-      })
+      }
       Utils.log(Utils.table(rows))
     }
   }
