@@ -64,7 +64,15 @@ class DatabaseLoader {
   load(consulKey, instanceKey = '', callback) {
     let that = this
     return co(function*() {
-      instanceKey = instanceKey || consulKey
+      if (Utils._.isFunction(instanceKey) || Utils._.isArray(instanceKey)) {
+        callback = instanceKey
+        instanceKey = consulKey
+      } else if (Utils._.isString(instanceKey)) {
+        instanceKey = instanceKey || Utils._.isString(consulKey) ? consulKey : Utils.md5(JSON.stringify(consulKey))
+      } else {
+        throw new Error('Undefined argument type!')
+      }
+      
 
       // init db only once
       if (that.instances[instanceKey]) {
@@ -190,13 +198,24 @@ class DatabaseLoader {
         } catch (e) {}
       })
 
-      if (Utils._.isFunction(callback)) {
-        callback(sequelize.models, sequelize)
-      } else if (Utils._.isString(callback)) {
-        // implicitly means to call this.associate, and callback is actually modealPath
-        that.associate(callback)(sequelize)
+      if (Utils._.isArray(callback)) {
+        callback.map(cb => {
+          if (Utils._.isFunction(cb)) {
+            cb(sequelize.models, sequelize)
+          } else if (Utils._.isString(cb)) {
+            // implicitly means to call this.associate, and cb is actually modealPath
+            that.associate(cb)(sequelize.models, sequelize)
+          }
+        })
+      } else {
+        if (Utils._.isFunction(callback)) {
+          callback(sequelize.models, sequelize)
+        } else if (Utils._.isString(callback)) {
+          // implicitly means to call this.associate, and callback is actually modealPath
+          that.associate(callback)(sequelize.models, sequelize)
+        }
       }
-
+      
       if (that.options.loadReturnInstance) {
         return that.instances[instanceKey]
       }
@@ -210,8 +229,8 @@ class DatabaseLoader {
    * @param {string} modelPath
    */
   associate(modelPath) {
-    return function(sequelize) {
-      Object.keys(sequelize.models).forEach(modelName => {
+    return function(models, sequelize) {
+      Object.keys(models).forEach(modelName => {
         if (fs.existsSync(`${modelPath}/${modelName}.js`)) {
           let model = sequelize.models[modelName]
           let modelExtend = require(`${modelPath}/${modelName}`)
