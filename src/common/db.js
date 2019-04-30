@@ -68,7 +68,7 @@ class DatabaseLoader {
         callback = instanceKey
         instanceKey = consulKey
       } else if (Utils._.isString(instanceKey)) {
-        instanceKey = instanceKey || Utils._.isString(consulKey) ? consulKey : Utils.md5(JSON.stringify(consulKey))
+        instanceKey = instanceKey || (Utils._.isString(consulKey) ? consulKey : Utils.md5(JSON.stringify(consulKey)))
       } else {
         throw new Error('Undefined argument type!')
       }
