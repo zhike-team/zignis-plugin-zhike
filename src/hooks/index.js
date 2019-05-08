@@ -137,7 +137,7 @@ module.exports = {
 
     return {
       zignisPluginTen: function (argv, yargs) {
-        yargs.default('disable-ten-temporarily')
+        yargs.default('disable-ten-temporarily', false).describe('disable-ten-temporarily', 'Disable [Zhike-Ten-Rules] tip.')
         const config = Utils.getCombinedConfig()
         if (argv.disableTenTemporarily || config.disableTenTemporarily || argv.execMode) {
           return
