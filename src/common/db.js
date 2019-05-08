@@ -104,7 +104,6 @@ class DatabaseLoader {
 
       let sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
         dialect: dbConfig.dialect,
-        operatorsAliases: false,
         host: dbConfig.host,
         port: dbConfig.port,
         timezone: '+08:00',
