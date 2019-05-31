@@ -16,7 +16,7 @@
   "dependencies": {
     "ali-mns": "^2.6.8",
     "ali-oss": "^6.0.2",
-    "axios": "^0.18.0",
+    "axios": "^0.19.0",
     "co": "^4.6.0",
     "ioredis": "^4.2.0",
     "is-reachable": "^3.0.0",
