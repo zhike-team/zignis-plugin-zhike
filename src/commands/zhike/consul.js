@@ -3,7 +3,6 @@ const Consul = require('zhike-consul')
 const consulConfig = require('../../../consul.json')
 const { Utils } = require('zignis')
 
-const isReachable = require('is-reachable')
 const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
 const consulCachedKV = {}
 const consulCachedInstance = {}
@@ -43,10 +42,6 @@ exports.handler = function(argv) {
       data = consulCachedKV[cacheKey]
       consul = consulCachedInstance[cacheKey]
     } else {
-      const checkReachable = yield isReachable(`${consulConfig[env].host}:${consulConfig[env].port}`)
-      if (!checkReachable) {
-        Utils.error(`Consul host ${consulConfig[env].host}:${consulConfig[env].port} not reachable!`)
-      }
       consul = new Consul(
         keysPrefix,
         consulConfig[env].host,
@@ -58,7 +53,11 @@ exports.handler = function(argv) {
         }
       )
 
-      data = yield consul.pull(env)
+      try {
+        data = yield consul.pull(env)
+      } catch (error) {
+        Utils.error(`Consul pull ${consulConfig[env].host}:${consulConfig[env].port} failed: ${error}!`)
+      }
       consulCachedKV[cacheKey] = data
       consulCachedInstance[cacheKey] = consul
     }
