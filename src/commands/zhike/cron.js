@@ -63,14 +63,16 @@ exports.handler = function(argv) {
   const config = Utils.getCombinedConfig()
   co(function*() {
 
-    // 通过 Hook 进行初始化动作
-    const initInfo = yield Utils.invokeHook('zhike_cron')
-
     // run specific job for testing, ignore disabled property
     if (argv.job) {
       if (fs.existsSync(path.resolve(process.cwd(), argv.job))) {
         const jobModule = require(path.resolve(process.cwd(), argv.job))
         if (jobModule && jobModule.actions && Utils._.isArray(jobModule.actions)) {
+          let initInfo
+          if (jobModule.hook) {
+            // 通过 Hook 进行初始化动作
+            initInfo = yield Utils.invokeHook('zhike_cron')
+          }
           yield shell.series(jobModule.actions, initInfo)
           process.exit(0)
         } else {
@@ -130,6 +132,11 @@ exports.handler = function(argv) {
               jobs[key].duration ? jobs[key].duration : DEFAULT_EXPIRE_MILLISECONDS
             )
             if (ok) {
+              let initInfo
+              if (jobs[key].hook) {
+                // 通过 Hook 进行初始化动作
+                initInfo = yield Utils.invokeHook('zhike_cron')
+              }
               yield shell.series(jobs[key].actions, initInfo)
               yield unlock(redisKey, redisValue)
             } else {
