@@ -36,7 +36,6 @@ exports.schedule = '* * * * *'
 exports.duration = 60000
 exports.actions = [demoAction]
 exports.disabled = false
-exports.hook = true
 
 `
   if (!fs.existsSync(cronFile)) {
