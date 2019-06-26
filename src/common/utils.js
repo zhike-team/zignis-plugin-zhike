@@ -4,6 +4,7 @@ const debug = Utils.debug('zignis-plugin-zhike:utils')
 
 const mq = require('./mq')
 const oss = require('./oss')
+const elasticsearch = require('./elasticsearch')
 const consulCommand = require('../commands/zhike/consul')
 const DatabaseLoader = require('./db')
 const dbForComponent = new DatabaseLoader({ loadReturnInstance: true })
@@ -74,5 +75,6 @@ module.exports = {
   api,
   mq,
   oss,
+  elasticsearch,
   co
 }

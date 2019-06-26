@@ -65,6 +65,8 @@ module.exports = {
         api: ZhikeUtils.api('zignis-plugin-zhike'),
         mq: ZhikeUtils.mq,
         oss: ZhikeUtils.oss,
+        es: ZhikeUtils.elasticsearch,
+        elasticsearch: ZhikeUtils.elasticsearch,
       }, hookZhikeRepl)
     }
   },
@@ -115,6 +117,8 @@ module.exports = {
         api: ZhikeUtils.api,
         mq: ZhikeUtils.mq,
         oss: ZhikeUtils.oss,
+        es: ZhikeUtils.elasticsearch,
+        elasticsearch: ZhikeUtils.elasticsearch,
       }, hookZhikeComponent)
     }).catch(e => {
       throw new Error(e.stack)
