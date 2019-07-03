@@ -1,5 +1,5 @@
 {
-  "commandDir": "src/commands",
-  "extendDir": "src/extends",
-  "hookDir": "src/hooks"
+  "commandDir": "lib/commands",
+  "extendDir": "lib/extends",
+  "hookDir": "lib/hooks"
 }
