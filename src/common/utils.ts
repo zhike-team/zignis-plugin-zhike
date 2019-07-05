@@ -26,14 +26,14 @@ const config = {
       keys = Array.isArray(keys) ? keys : Utils.splitComma(keys)
       const { result, zhikeConsul, env } = await consulCommand.handler({ keys, silent: true })
       const consul = zhikeConsul.consul
-      const watch = function(key_1: string) {
-        let watch = consul.watch({ method: consul.kv.get, options: { key_1 } })
+      const watch = function(key: string) {
+        let watch = consul.watch({ method: consul.kv.get, options: { key } })
         watch.once('change', function() {
           // 初始会有一次 change 事件，忽略第一次的事件
           watch.on('change', function(data: any) {
             let value = JSON.parse(data.Value)[env]
-            debug(`CFG ${key_1} changed to:`, value)
-            callback && callback(key_1, value)
+            debug(`CFG ${key} changed to:`, value)
+            callback && callback(key, value)
           })
           watch.on('error', function(err: Error) {
             // always received errors, but watch still working, use this event listenner to skip error

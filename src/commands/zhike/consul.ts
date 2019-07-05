@@ -35,10 +35,11 @@ export const handler = async function(argv: {
     if (!argv.keys) {
       Utils.error('Please provide at least 1 key')
     }
-    const keysPrefix: string[] = []
+    let keysPrefix: string[] = []
     argv.keys.map((key: string) => {
       keysPrefix.push(key.split('.')[0])
     })
+    keysPrefix = Utils._.uniq(keysPrefix)
     const cacheKey = `${env}:${Utils.md5(JSON.stringify(keysPrefix))}`
     let data: any
     let consul
