@@ -52,7 +52,6 @@ export const handler = async function(argv: any) {
     })
 
     if (results.length > 0) {
-      const firstRow = results[0]
       const fields = argv.fields ? argv.fields.replace(/,/g, ' ').split(/\s+/) : Object.keys(results[0])
       const filteredResults = results.map(function(row: any) {
         let newRow: any = {}

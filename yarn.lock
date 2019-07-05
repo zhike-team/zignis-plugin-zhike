@@ -6912,10 +6912,10 @@ zhike-consul@^1.0.12:
     bluebird "^3.4.6"
     consul "^0.27.0"
 
-zignis@^1.6.4:
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/zignis/-/zignis-1.6.4.tgz#7840869e0ede2086ef8f41eb23b8238c27be4601"
-  integrity sha512-xtpILVDjbhcc7KNZw3wNdteEjMvgQkuU3mYIc7TVBzjZddw89G7SGrehpULjhkz7icCD22+iobbEEKguomU4Fw==
+zignis@^1.6.5:
+  version "1.6.5"
+  resolved "https://registry.yarnpkg.com/zignis/-/zignis-1.6.5.tgz#65ca113b896d77001a0c9198aae3eba26ca2d9af"
+  integrity sha512-CQWfyFqfUSy1WzIjhP0qY8oGV0bsRkigb0yV67B54j+nYOqfBv87uB3/qa1afzVNuwFy4HI8LKNz/CjeibCZNw==
   dependencies:
     chalk "^2.4.2"
     co "^4.6.0"
