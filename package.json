@@ -35,7 +35,7 @@
     "zhike-consul": "^1.0.12"
   },
   "peerDependencies": {
-    "zignis": "^1.6.5"
+    "zignis": "^1.6.7"
   },
   "devDependencies": {
     "@types/ali-oss": "^6.0.3",
