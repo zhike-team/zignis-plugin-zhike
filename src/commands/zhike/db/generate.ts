@@ -50,17 +50,18 @@ export const handler = async function(argv: any) {
       ret = await migration.genMigrationForTable(tableName, dbInstance, dbConfig, argv)
     }
 
+    const migrationDir = argv.migrationMakeDir || argv.migrationDir
     if (argv.simulate) {
       console.log(ret)
     } else {
-      if (!argv.migrationDir || !fs.existsSync(argv.migrationDir)) {
+      if (!migrationDir || !fs.existsSync(migrationDir)) {
         Utils.error('"migrationDir" missing in config file or not exist in current directory!')
       }
 
       const fileName = migration.genFileSuffix(argv)
       const filePrefix = Utils.day().format('YYYYMMDDHHmmssSSS')
       const migrationFile = path.resolve(
-        argv.migrationDir,
+        migrationDir,
         `${filePrefix}_${Utils._.kebabCase(fileName)}.${argv.typescript ? 'ts' : 'js'}`
       )
       if (fs.existsSync(migrationFile)) {

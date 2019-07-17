@@ -8,13 +8,14 @@ export const desc = 'Generate a zignis cron job file'
 export const builder = function(yargs: any) {}
 
 export const handler = function(argv: any) {
-  if (!argv.cronDir || !fs.existsSync(argv.cronDir)) {
+  const cronDir = argv.cronMakeDir || argv.cronDir
+  if (!cronDir || !fs.existsSync(cronDir)) {
     console.log(Utils.chalk.red('"cronDir" missing in config file or not exist in current directory!'))
     return
   }
 
   const filePrefix = Utils.day().format('YYYYMMDDHHmmssSSS')
-  const cronFile = path.resolve(argv.cronDir, `${filePrefix}_${Utils._.kebabCase(argv.name)}.js`)
+  const cronFile = path.resolve(cronDir, `${filePrefix}_${Utils._.kebabCase(argv.name)}.js`)
   if (fs.existsSync(cronFile)) {
     console.log(Utils.chalk.red('Script file exist!'))
     return
