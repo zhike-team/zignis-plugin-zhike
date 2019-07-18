@@ -23,7 +23,7 @@ const TYPESCRIPT_MIGRATION_TEMPLATE =
   // args: up & down
   `'use strict';
 
-module.exports = {
+export = {
   up: function (queryInterface: any, Sequelize: any) {
     %s
   },
