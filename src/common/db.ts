@@ -129,13 +129,14 @@ class DatabaseLoader {
       const tables = await queryInterface.showAllTables()
       const tableInfos = await Promise.all(
         tables.map((table: string) => {
-          return queryInterface.describeTable(table)
+          return queryInterface.describeTable(table).catch(() => false);
         })
       )
 
       const combinedTableInfos = Utils._.zipObject(tables, tableInfos)
       Object.keys(combinedTableInfos).forEach(table => {
         const tableInfo: any = combinedTableInfos[table]
+        if (!tableInfo) return
         const newTableInfo: { [propName: string]: any } = {}
         const newTableFields: any[] = []
         Object.keys(tableInfo).map(field => {
