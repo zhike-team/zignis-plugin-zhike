@@ -141,7 +141,6 @@ export const hook_beforeCommand = async () => {
   return {
     zignisPluginTen: function(argv: any, yargs: any) {
       yargs.option('disable-ten-temporarily', {
-        default: false,
         describe: 'Disable [Zhike-Ten-Rules] tip.'
       })
       const config = Utils.getCombinedConfig()
