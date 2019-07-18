@@ -22,7 +22,6 @@
     "co": "^4.6.0",
     "ioredis": "^4.11.1",
     "js-beautify": "^1.10.0",
-    "k8s": "^0.4.15",
     "mysql2": "^1.6.5",
     "node-cron": "^2.0.3",
     "node-sqlparser": "^1.0.4",
