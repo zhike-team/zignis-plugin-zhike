@@ -21,7 +21,7 @@ export const builder = function(yargs: any) {
 
 export const handler = async function(argv: any) {
   try {
-    const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
+    const env = Utils.getNodeEnv() // development/production/test
     const consul = new Consul(
       ['redis'],
       consulConfig[env].host,

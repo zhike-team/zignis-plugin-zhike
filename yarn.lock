@@ -6940,10 +6940,10 @@ zhike-consul@^1.0.12:
     bluebird "^3.4.6"
     consul "^0.27.0"
 
-zignis@^1.6.16:
-  version "1.6.16"
-  resolved "https://registry.yarnpkg.com/zignis/-/zignis-1.6.16.tgz#45e428403efdfe5d94bffbcc32c55a3a69d0669a"
-  integrity sha512-RDofhjgnVyaRyIEbr7x6bK315bQ7bmqdExExw+offsed8fmcucj8MovmfWGyYgsCMW1c9IH5UbAgEvYenud2Qw==
+zignis@^1.6.19:
+  version "1.6.19"
+  resolved "https://registry.yarnpkg.com/zignis/-/zignis-1.6.19.tgz#9165f0364b142a3082f369c42d3db4c0693278e6"
+  integrity sha512-4KJuZLvRMOvYz9mFefk/0yJDcVUHBZJz6nA9yNgBxKPnzpQ38cYWk9lVbjNTBu/+SlIVEHPwr9/mhiEFiBDT9w==
   dependencies:
     chalk "^2.4.2"
     co "^4.6.0"

@@ -148,7 +148,7 @@ export const hook_beforeCommand = async () => {
         return
       }
 
-      const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
+      const env = Utils.getNodeEnv() // development/production/test
       const envColor = env === 'production' ? 'yellow' : 'green'
       console.log(Utils.chalk[envColor](ten[Math.floor(Math.random() * ten.length)]), '\n')
     }

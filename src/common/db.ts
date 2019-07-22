@@ -185,7 +185,7 @@ class DatabaseLoader {
           model.drop = forbiddenMethod // 以防误删表
           model.sync = forbiddenMethod
 
-          if (that.options.readonly && process.env.NODE_ENV === 'production') {
+          if (that.options.readonly && Utils.getNodeEnv() === 'production') {
             model.upsert = forbiddenMethod
             model.truncate = forbiddenMethod
             model.destroy = forbiddenMethod

@@ -3,7 +3,7 @@ import yargs from 'yargs'
 import { Utils } from 'zignis'
 
 const consulConfig = require('../../../consul.json')
-const env: string = process.env.NODE_ENV ? process.env.NODE_ENV : 'development' // development/production/test
+const env: string = Utils.getNodeEnv() // development/production/test
 const consulCachedKV: { [propName: string]: any } = {}
 const consulCachedInstance: { [propName: string]: any } = {}
 
