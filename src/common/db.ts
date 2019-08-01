@@ -139,6 +139,7 @@ class DatabaseLoader {
         if (!tableInfo) return
         const newTableInfo: { [propName: string]: any } = {}
         const newTableFields: any[] = []
+        let tableAutoIncrementFieldExisted = false
         Object.keys(tableInfo).map(field => {
           const newField = field.replace(/(_.)/g, function(word) {
             return word[1].toUpperCase()
@@ -149,6 +150,12 @@ class DatabaseLoader {
           if (/^nextval\(.*?::regclass\)$/.test(tableInfo[field].defaultValue)) {
             delete tableInfo[field].defaultValue
             tableInfo[field].autoIncrement = true
+            tableAutoIncrementFieldExisted = true
+          }
+
+          // Only one autoincrement field allowed, we should put autoIncrement at the first of the table
+          if (tableAutoIncrementFieldExisted && tableInfo[field].autoIncrement) {
+            delete tableInfo[field].autoIncrement
           }
 
           newTableInfo[newField] = tableInfo[field]
