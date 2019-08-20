@@ -60,11 +60,12 @@ class DatabaseLoader {
    * @param {string} instanceKey
    * @param {function} callback
    */
-  async load(consulKey: string | { [propName: string]: any }, instanceKey: any = '', callback: any) {
+  async load(consulKey: string | { [propName: string]: any }, instanceKey: any = '', callback: any, opts) {
     let that = this
     try {
       if (Utils._.isFunction(instanceKey) || Utils._.isArray(instanceKey)) {
         callback = instanceKey
+        opts = callback
         instanceKey = <string>consulKey
       } else if (Utils._.isString(instanceKey)) {
         instanceKey = instanceKey || (Utils._.isString(consulKey) ? consulKey : Utils.md5(JSON.stringify(consulKey)))
@@ -108,6 +109,9 @@ class DatabaseLoader {
         logging: undefined,
         pool: {
           max: dbConfig.pool
+        },
+        query: {
+          raw: opts.raw || false
         }
       })
 
