@@ -8,22 +8,22 @@ export const desc = 'db migration generator'
 export const aliases = ['g', 'create']
 
 export const builder = function(yargs: any) {
-  yargs.option('attributes', { default: false, describe: 'define attributes for table/field' })
-  yargs.option('rename', { default: false, describe: 'rename table/field name' })
-  yargs.option('modify', { default: false, describe: 'modify field defination' })
+  yargs.option('attributes', { default: false, describe: 'define attributes for table/field', alias: 'attrs' })
+  yargs.option('rename', { describe: 'rename table/field name' })
+  yargs.option('modify', { describe: 'modify field defination' })
 
-  yargs.option('only-up', { default: false, describe: 'empty down process' })
-  yargs.option('simulate', { default: false, describe: 'only output in stdout', alias: 'dry' })
-  yargs.option('reverse', { default: false, describe: 'reverse up and down' })
+  yargs.option('only-up', { describe: 'empty down process' })
+  yargs.option('simulate', { describe: 'only output in stdout', alias: 'dry-run' })
+  yargs.option('reverse', { describe: 'reverse up and down' })
   yargs.option('migration-dir', { default: false, describe: 'change migration dir' })
 
   yargs.option('file-suffix', {
     default: false,
     describe: 'migration file suffix name, override the auto generated name'
   })
-  yargs.option('index', { default: false, describe: 'add index' })
+  yargs.option('index', { describe: 'add index' })
 
-  yargs.option('typescript', { default: false, describe: 'typescript format migration file', alias: 'ts' })
+  yargs.option('typescript', { describe: 'typescript format migration file', alias: 'ts' })
 }
 
 export const handler = async function(argv: any) {
