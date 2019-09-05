@@ -60,7 +60,7 @@ class DatabaseLoader {
    * @param {string} instanceKey
    * @param {function} callback
    */
-  async load(consulKey: string | { [propName: string]: any }, instanceKey: any = '', callback: any, opts) {
+  async load(consulKey: string | { [propName: string]: any }, instanceKey: any = '', callback: any, opts = {}) {
     let that = this
     try {
       if (Utils._.isFunction(instanceKey) || Utils._.isArray(instanceKey)) {
