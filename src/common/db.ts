@@ -2,6 +2,7 @@ import { Sequelize, Model, Op } from 'sequelize'
 import { Utils } from 'zignis'
 import fs from 'fs'
 import * as consulCommand from '../commands/zhike/consul'
+import { db } from '..';
 
 class DatabaseLoader {
   options: { [propName: string]: any }
@@ -108,7 +109,7 @@ class DatabaseLoader {
         timezone: '+08:00',
         logging: undefined,
         pool: {
-          max: dbConfig.pool || 50
+          max: Utils._.isObject(dbConfig.pool) ? (dbConfig.pool.max || 50) : (dbConfig.pool || 50)
         },
         query: {
           raw: opts.raw || false
