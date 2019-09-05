@@ -215,21 +215,23 @@ class DatabaseLoader {
       // 2, 一组路径
       // 3，一个回调函数
       // 4，一个路径
-      if (Utils._.isArray(callback)) {
-        callback.map((cb: any) => {
-          if (Utils._.isFunction(cb)) {
-            cb(sequelize.models, sequelize)
-          } else if (Utils._.isString(cb)) {
-            // implicitly means to call this.associate, and cb is actually modealPath
-            that.associate(cb)(sequelize.models, sequelize)
+      if (callback) {
+        if (Utils._.isArray(callback)) {
+          callback.map((cb: any) => {
+            if (Utils._.isFunction(cb)) {
+              cb(sequelize.models, sequelize)
+            } else if (Utils._.isString(cb)) {
+              // implicitly means to call this.associate, and cb is actually modealPath
+              that.associate(cb)(sequelize.models, sequelize)
+            }
+          })
+        } else {
+          if (Utils._.isFunction(callback)) {
+            callback(sequelize.models, sequelize)
+          } else if (Utils._.isString(callback)) {
+            // implicitly means to call this.associate, and callback is actually modealPath
+            that.associate(callback)(sequelize.models, sequelize)
           }
-        })
-      } else {
-        if (Utils._.isFunction(callback)) {
-          callback(sequelize.models, sequelize)
-        } else if (Utils._.isString(callback)) {
-          // implicitly means to call this.associate, and callback is actually modealPath
-          that.associate(callback)(sequelize.models, sequelize)
         }
       }
 
