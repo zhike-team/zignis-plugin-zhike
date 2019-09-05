@@ -24,7 +24,7 @@ const config = {
   async getAndWatch(keys: string | string[], callback: any) {
     try {
       const keysArray = Array.isArray(keys) ? keys : Utils.splitComma(keys)
-      const { result, zhikeConsul, env } = await consulCommand.handler({ keysArray, silent: true })
+      const { result, zhikeConsul, env } = await consulCommand.handler({ keys: keysArray, silent: true })
       const consul = zhikeConsul.consul
       const watch = function(key: string) {
         let watch = consul.watch({ method: consul.kv.get, options: { key } })
