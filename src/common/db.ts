@@ -108,7 +108,7 @@ class DatabaseLoader {
         timezone: '+08:00',
         logging: undefined,
         pool: {
-          max: dbConfig.pool
+          max: dbConfig.pool || 50
         },
         query: {
           raw: opts.raw || false
