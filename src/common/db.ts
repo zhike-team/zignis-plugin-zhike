@@ -2,7 +2,6 @@ import { Sequelize, Model, Op } from 'sequelize'
 import { Utils } from 'zignis'
 import fs from 'fs'
 import * as consulCommand from '../commands/zhike/consul'
-import { db } from '..';
 
 class DatabaseLoader {
   options: { [propName: string]: any }
