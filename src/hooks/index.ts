@@ -34,17 +34,17 @@ export const hook_new_repo = {
  * Implement hook: repl.
  * Add Zhike resources into Zignis REPL mode.
  * @example
- * // Fetch zhike consul config，alias: zhike.config
+ * /// Fetch zhike consul config，alias: zhike.config
  * $ zignis repl
  * >>> await zhike.consul.get('db.user', 'oss')
  * @example
- * // Support all ioredis apis, alias: zhike.cache
+ * /// Support all ioredis apis, alias: zhike.cache
  * $ zignis repl
  * >>> await zhike.redis.keys('*')
  * @example
- * // All database instances are loaded into zhike.db.instances
- * // Database instances are Sequelize model instances
- * // You can not do dangerous Sequelize operations in REPL mode
+ * /// All database instances are loaded into zhike.db.instances
+ * /// Database instances are Sequelize model instances
+ * /// You can not do dangerous Sequelize operations in REPL mode
  * $ zignis repl
  * >>> await zhike.db.load('db.user', 'user')
  * >>> const { Account } = zhike.db.instances.user.models
@@ -78,17 +78,17 @@ export const hook_repl = async (): Promise<object> => {
  * Implement hook: components.
  * Add Zhike resources into plugins which depend on this plugin, or Zignis scripts.
  * @example
- * // Used in command defination
+ * /// Used in command defination
  * const { Utils } = require('zignis')
  * exports.handler = async function(argv) {
  *   const { db } = await Utils.invokeHook('components')
- *   // Here, Sequelize instance is returned directly, different from repl hook
+ *   /// Here, Sequelize instance is returned directly, different from repl hook
  *   const userDb = await db.load('db.user', 'user', db.associate('./models'))
  *   const { Account } = userDb.models
  *   const count = await Account.count()
  * }
  * @example
- * // Zignis script db access demo
+ * /// Zignis script db access demo
  * module.exports = async function(components) {
  *   const { config } = await Utils.invokeHook('components')
  *   console.log(await config.get('oss'))
@@ -96,7 +96,7 @@ export const hook_repl = async (): Promise<object> => {
  *   process.exit(0)
  * }
  * @example
- * // Consul config watch demo
+ * /// Consul config watch demo
  * const { consul } = await Utils.invokeHook('components')
  * const config = await consul.getAndWatch('socialPrivate,oss', function(key, value) {
  *   config[key] = value
@@ -148,7 +148,7 @@ export const hook_beforeCommand = async () => {
         return
       }
 
-      const env = Utils.getNodeEnv() // development/production/test
+      const env = Utils.getNodeEnv() /// development/production/test
       const envColor = env === 'production' ? 'yellow' : 'green'
       console.log(Utils.chalk[envColor](ten[Math.floor(Math.random() * ten.length)]), '\n')
     }

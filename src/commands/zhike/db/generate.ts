@@ -11,6 +11,7 @@ export const builder = function(yargs: any) {
   yargs.option('attributes', { default: false, describe: 'define attributes for table/field', alias: 'attrs' })
   yargs.option('rename', { describe: 'rename table/field name' })
   yargs.option('modify', { describe: 'modify field defination' })
+  yargs.option('disable-timestamps', { describe: 'do not add createdAt and updatedAt fields when creating table' })
 
   yargs.option('only-up', { describe: 'empty down process' })
   yargs.option('simulate', { describe: 'only output in stdout', alias: 'dry-run' })

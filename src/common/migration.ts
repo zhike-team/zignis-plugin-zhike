@@ -37,12 +37,15 @@ export = {
 const CREATE_TABLE_TEMPLATE = `return queryInterface.createTable('%s', %s);` // args: tablename & attrs
 const DROP_TABLE_TEMPLATE = `return queryInterface.dropTable('%s');` // args: tablename
 const RENAME_TABLE_TEMPLATE = `return queryInterface.renameTable('%s', '%s')` // args: tablename before, tablename after
+const PROCESS_MULTI_FIELDS = `return Promise.all(\n%s)` // args: fields ops
+const CREATE_FIELD_TEMPLATE_NOT_RETURN = `queryInterface.addColumn('%s', '%s', %s)` // args: tablename, fieldname, type
+const DROP_FIELD_TEMPLATE_NOT_RETURN = `queryInterface.removeColumn('%s', '%s');` // args: tablename, fieldname
 const CREATE_FIELD_TEMPLATE = `return queryInterface.addColumn('%s', '%s', %s)` // args: tablename, fieldname, type
-const CREATE_FIELD_INDEX_TEMPLATE = `return queryInterface.addIndex('%s', ['%s'], {name: '%s', type: 'UNIQUE'})` // args: tablename, fieldname, index name
-const REMOVE_FIELD_INDEX_TEMPLATE = `return queryInterface.removeIndex('%s', '%s')` // args: tablename, fieldname, type
+const DROP_FIELD_TEMPLATE = `return queryInterface.removeColumn('%s', '%s');` // args: tablename, fieldname
 const MODIFY_FIELD_TEMPLATE = `return queryInterface.changeColumn('%s', '%s', %s)` // args: tablename, fieldname, type
 const RENAME_FIELD_TEMPLATE = `return queryInterface.renameColumn('%s', '%s', '%s')` // args: tablename, fieldname before, field name after
-const DROP_FIELD_TEMPLATE = `return queryInterface.removeColumn('%s', '%s');` // args: tablename, fieldname
+const CREATE_FIELD_INDEX_TEMPLATE = `return queryInterface.addIndex('%s', ['%s'], {name: '%s', type: 'UNIQUE'})` // args: tablename, fieldname, index name
+const REMOVE_FIELD_INDEX_TEMPLATE = `return queryInterface.removeIndex('%s', '%s')` // args: tablename, fieldname, type
 
 const schemaInfo = {
   getForeignKeysQuery: function(tableName: string) {
@@ -108,7 +111,7 @@ const genFieldType = function(_attr: string) {
   _attr = Utils._.lowerCase(_attr)
   if (_attr === 'boolean' || _attr === 'bit(1)' || _attr === 'bit') {
     val = 'Sequelize.BOOLEAN'
-  } else if (_attr.match(/^(smallint|mediumint|tinyint|int)/)) {
+  } else if (_attr.match(/^(smallint|mediumint|tinyint|int|integer)/)) {
     let length = _attr.match(/\(\d+\)/)
     let length_0
     if (length) {
@@ -130,7 +133,7 @@ const genFieldType = function(_attr: string) {
       length_0 = length[0]
     }
     val = 'Sequelize.STRING' + (!Utils._.isNull(length_0) && Number(length_0) != 255 ? `(${length_0})` : '')
-  } else if (_attr.match(/^string|letying|nletchar/)) {
+  } else if (_attr.match(/^str|string|letying|nletchar/)) {
     val = 'Sequelize.STRING'
   } else if (_attr.match(/^char/)) {
     let length = _attr.match(/\d+/)
@@ -214,6 +217,15 @@ const transformAttributes = function(flag: string, sequelize: any) {
 
     if (formattedAttribute) {
       try {
+        // Add custom type names
+        switch (formattedAttribute.dataType.toLowerCase()) {
+          case 'int':
+            formattedAttribute.dataType = 'integer'
+          break
+          case 'str':
+            formattedAttribute.dataType = 'string'
+          break
+        }
         validateDataType(formattedAttribute.dataType, sequelize)
       } catch (err) {
         Utils.error(`Attribute '${attribute}' cannot be parsed: ${err.message}`)
@@ -381,13 +393,31 @@ export const genMigrationForField = async function(
       } else {
         let attrStr
         if (options.attributes) {
-          if (!optionAttrs || !optionAttrs[field]) {
-            Utils.error(`No such field: ${table}.${field} in options.attributes`)
+          let parseField = Utils.splitComma(field)
+          if (parseField.length === 1) {
+            if (!optionAttrs || !optionAttrs[field]) {
+              Utils.error(`No such field: ${table}.${field} in options.attributes`)
+            }
+            attrStr = tosource(optionAttrs[field]).replace(/"(Sequelize(.*?))"/g, '$1')
+  
+            up = util.format(CREATE_FIELD_TEMPLATE, table, field, attrStr)
+            down = util.format(DROP_FIELD_TEMPLATE, table, field)
+          } else {
+            up = util.format(PROCESS_MULTI_FIELDS, parseField.map(f => {
+              if (!optionAttrs || !optionAttrs[f]) {
+                return null
+              } else {
+                return util.format(CREATE_FIELD_TEMPLATE_NOT_RETURN, table, f, tosource(optionAttrs[f]).replace(/"(Sequelize(.*?))"/g, '$1'))
+              }
+            }).filter(l => l !== null).join(', \n'))
+            down = util.format(PROCESS_MULTI_FIELDS, parseField.map(f => {
+              if (!optionAttrs || !optionAttrs[f]) {
+                return null
+              } else {
+                return util.format(DROP_FIELD_TEMPLATE_NOT_RETURN, table, f)
+              }
+            }).filter(l => l !== null).join(', \n'))
           }
-          attrStr = tosource(optionAttrs[field]).replace(/"(Sequelize(.*?))"/g, '$1')
-
-          up = util.format(CREATE_FIELD_TEMPLATE, table, field, attrStr)
-          down = util.format(DROP_FIELD_TEMPLATE, table, field)
         } else {
           if (attrs[field]) {
             attrStr = tosource(attrs[field]).replace(/"(Sequelize(.*?))"/g, '$1')
