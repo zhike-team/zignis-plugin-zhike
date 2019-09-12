@@ -40,6 +40,7 @@ export const schedule = '* * * * *'
 export const duration = 60000
 export const actions = [demoAction]
 export const disabled = false
+export const env = 'production'
 `
   } else {
     code = `const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))

@@ -116,6 +116,7 @@ export const handler = async function(argv: any) {
     if (Object.keys(jobs).length > 0) {
       Object.keys(jobs).forEach(key => {
         if (jobs[key].disabled) return // ignore disabled job
+        if (jobs[key].env && jobs[key].env !== Utils.getNodeEnv()) return // ignore if env not match
         cron.schedule(jobs[key].schedule, function() {
           const redisKey = `${config.name}:cronjob:${key}`
           const redisValue = Math.random()
