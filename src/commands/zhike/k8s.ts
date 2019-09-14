@@ -7,22 +7,22 @@ export const aliases = ['kubectl']
 export const builder = function(yargs: any) {
   yargs.option('namespace', {
     alias: 'n',
-    default: Utils._.get(Utils.getCombinedConfig(), 'commandDefault.zhike.k8s.namespace') || 'c-dev',
+    default: 'c-dev',
     describe: 'k8s namespace, support c-dev/c-production'
   })
 
   yargs.option('binary', {
-    default: Utils._.get(Utils.getCombinedConfig(), 'commandDefault.zhike.k8s.binary') || '/usr/local/bin/kubectl',
+    default: '/usr/local/bin/kubectl',
     describe: 'k8s kubectl absolute path'
   })
 
   yargs.option('dev-config-path', {
-    default: Utils._.get(Utils.getCombinedConfig(), 'commandDefault.zhike.k8s.config.dev') || '',
+    default: '~/.kube/config',
     describe: 'k8s dev config path'
   })
 
   yargs.option('prod-config-path', {
-    default: Utils._.get(Utils.getCombinedConfig(), 'commandDefault.zhike.k8s.config.prod') || '',
+    default: '~/.kube/config',
     describe: 'k8s prod config path'
   })
 

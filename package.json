@@ -34,7 +34,7 @@
     "zhike-consul": "^1.0.12"
   },
   "peerDependencies": {
-    "zignis": "^1.6.48"
+    "zignis": "^1.6.56"
   },
   "devDependencies": {
     "@types/ali-oss": "^6.0.4",
@@ -55,12 +55,14 @@
     "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
+    "rimraf": "^3.0.0",
     "typescript": "^3.5.3"
   },
   "scripts": {
     "build": "tsc",
+    "clean": "rimraf lib",
     "postversion": "git push && git push --tags",
-    "prepare": "npm run build",
+    "prepare": "npm run clean && npm run build",
     "jsdoc": "documentation build index.js src/hooks/index.js -f md --markdown-toc=false --shallow > docs/API.md"
   }
 }
