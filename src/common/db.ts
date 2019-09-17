@@ -11,6 +11,7 @@ class DatabaseLoader {
       {},
       {
         loadReturnInstance: false,
+        loadReturnModels: false,
         readonly: false
       },
       options
@@ -67,15 +68,32 @@ class DatabaseLoader {
         callback = instanceKey
         opts = callback
         instanceKey = <string>consulKey
+      } else if (Utils._.isObject(instanceKey)) {
+        callback = null
+        opts = instanceKey
+        instanceKey = <string>consulKey
       } else if (Utils._.isString(instanceKey)) {
         instanceKey = instanceKey || (Utils._.isString(consulKey) ? consulKey : Utils.md5(JSON.stringify(consulKey)))
       } else {
         throw new Error('Undefined argument type!')
       }
 
+      if (Utils._.isObject(callback)) {
+        opts = callback
+        callback = null
+      }
+
       // init db only once
       if (that.instances[instanceKey]) {
-        return that.instances[instanceKey]
+        if (that.options.loadReturnInstance) {
+          return that.instances[instanceKey]
+        }
+
+        if (that.options.loadReturnModels && that.instances[instanceKey].models) {
+          return that.instances[instanceKey].models
+        }
+
+        return that
       }
 
       let dbConfig: any
@@ -238,6 +256,12 @@ class DatabaseLoader {
       if (that.options.loadReturnInstance) {
         return that.instances[instanceKey]
       }
+
+      if (that.options.loadReturnModels && that.instances[instanceKey].models) {
+        return that.instances[instanceKey].models
+      }
+
+      return that
     } catch (e) {
       throw new Error(e.stack)
     }

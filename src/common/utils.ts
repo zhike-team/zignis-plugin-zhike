@@ -7,7 +7,7 @@ import * as consulCommand from '../commands/zhike/consul'
 import DatabaseLoader from './db'
 import api from './api'
 const dbForComponent = new DatabaseLoader({ loadReturnInstance: true })
-const dbForRepl = new DatabaseLoader({ readonly: true })
+const dbForRepl = new DatabaseLoader({ readonly: true, loadReturnModels: true })
 const debug = Utils.debug('zignis-plugin-zhike:utils')
 
 const config = {
