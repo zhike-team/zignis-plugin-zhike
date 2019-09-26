@@ -63,6 +63,10 @@ class DatabaseLoader {
    */
   async load(consulKey: string | { [propName: string]: any }, instanceKey: any = '', callback: any, opts: any = {}) {
     let that = this
+    opts = Object.assign({}, {
+      raw: false,
+      loadWithInit: false // 后面逐步迁移到使用 init 的方式初始化模型的机制
+    }, opts)
     try {
       if (Utils._.isFunction(instanceKey) || Utils._.isArray(instanceKey)) {
         callback = instanceKey
@@ -210,7 +214,18 @@ class DatabaseLoader {
             options.updatedAt = false
           }
 
-          let model = sequelize.define(modelNameUpper, newTableInfo, options)
+          let model
+          if (!opts.loadWithInit) {
+            model = sequelize.define(modelNameUpper, newTableInfo, options)
+          } else {
+            if (Utils._.isString(callback) && fs.existsSync(`${callback}/${modelNameUpper}.js`)) {
+              model = (require(`${callback}/${modelNameUpper}.js`)).init(newTableInfo, { sequelize, modelName: modelNameUpper })
+            } else {
+              model = (class extends Model {}).init(newTableInfo, { sequelize, modelName: modelNameUpper })
+            }
+          }
+
+
           model.drop = forbiddenMethod // 以防误删表
           model.sync = forbiddenMethod
 
@@ -228,29 +243,38 @@ class DatabaseLoader {
         } catch (e) {}
       })
 
-      // load 函数的callback参数可以是
-      // 1, 一个回调函数的数组，
-      // 2, 一组路径
-      // 3，一个回调函数
-      // 4，一个路径
-      if (callback) {
-        if (Utils._.isArray(callback)) {
-          callback.map((cb: any) => {
-            if (Utils._.isFunction(cb)) {
-              cb(sequelize.models, sequelize)
-            } else if (Utils._.isString(cb)) {
-              // implicitly means to call this.associate, and cb is actually modealPath
-              that.associate(cb)(sequelize.models, sequelize)
+      if (!opts.loadWithInit) {
+        // load 函数的callback参数可以是
+        // 1, 一个回调函数的数组，
+        // 2, 一组路径
+        // 3，一个回调函数
+        // 4，一个路径
+        if (callback) {
+          if (Utils._.isArray(callback)) {
+            callback.map((cb: any) => {
+              if (Utils._.isFunction(cb)) {
+                cb(sequelize.models, sequelize)
+              } else if (Utils._.isString(cb)) {
+                // implicitly means to call this.associate, and cb is actually modealPath
+                that.associate(cb)(sequelize.models, sequelize)
+              }
+            })
+          } else {
+            if (Utils._.isFunction(callback)) {
+              callback(sequelize.models, sequelize)
+            } else if (Utils._.isString(callback)) {
+              // implicitly means to call this.associate, and callback is actually modealPath
+              that.associate(callback)(sequelize.models, sequelize)
             }
-          })
-        } else {
-          if (Utils._.isFunction(callback)) {
-            callback(sequelize.models, sequelize)
-          } else if (Utils._.isString(callback)) {
-            // implicitly means to call this.associate, and callback is actually modealPath
-            that.associate(callback)(sequelize.models, sequelize)
           }
         }
+      } else {
+        Object.keys(sequelize.models).forEach(function (modelName) {
+          let model: any = sequelize.models[modelName]
+          if (Utils._.isFunction(model.associate)) {
+            model.associate(sequelize.models)
+          }
+        })
       }
 
       if (that.options.loadReturnInstance) {
