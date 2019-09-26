@@ -221,8 +221,8 @@ class DatabaseLoader {
           if (!opts.loadWithInit) {
             model = sequelize.define(modelNameUpper, newTableInfo, options)
           } else {
-            if (Utils._.isString(callback) && fs.existsSync(`${callback}/${modelNameUpper}.js`)) {
-              model = (require(`${callback}/${modelNameUpper}.js`)).init(newTableInfo, options)
+            if (Utils._.isString(callback) && fs.existsSync(require.resolve(`${callback}/${modelNameUpper}`))) {
+              model = (require(`${callback}/${modelNameUpper}`)).init(newTableInfo, options)
             } else {
               model = (class extends Model {}).init(newTableInfo, options)
             }
