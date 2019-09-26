@@ -77,6 +77,11 @@ class DatabaseLoader {
         opts = instanceKey
         instanceKey = <string>consulKey
       } else if (Utils._.isString(instanceKey)) {
+        if (Utils._.isObject(callback)) {
+          opts = callback
+          callback = instanceKey
+          instanceKey = ''
+        }
         instanceKey = instanceKey || (Utils._.isString(consulKey) ? consulKey : Utils.md5(JSON.stringify(consulKey)))
       } else {
         throw new Error('Undefined argument type!')
@@ -198,12 +203,10 @@ class DatabaseLoader {
         const modelNameUpper = modelName.replace(/( |^)[a-z]/g, L => L.toUpperCase())
 
         try {
-          let options: {
-            tableName: string
-            createdAt?: boolean
-            updatedAt?: boolean
-          } = {
-            tableName: table
+          let options: any = {
+            tableName: table,
+            modelName: modelNameUpper,
+            sequelize
           }
 
           if (newTableFields.indexOf('createdAt') === -1) {
@@ -219,9 +222,9 @@ class DatabaseLoader {
             model = sequelize.define(modelNameUpper, newTableInfo, options)
           } else {
             if (Utils._.isString(callback) && fs.existsSync(`${callback}/${modelNameUpper}.js`)) {
-              model = (require(`${callback}/${modelNameUpper}.js`)).init(newTableInfo, { sequelize, modelName: modelNameUpper })
+              model = (require(`${callback}/${modelNameUpper}.js`)).init(newTableInfo, options)
             } else {
-              model = (class extends Model {}).init(newTableInfo, { sequelize, modelName: modelNameUpper })
+              model = (class extends Model {}).init(newTableInfo, options)
             }
           }
 
