@@ -65,7 +65,7 @@ class DatabaseLoader {
     let that = this
     opts = Object.assign({}, {
       raw: false,
-      loadWithInit: false // 后面逐步迁移到使用 init 的方式初始化模型的机制
+      extendModelClass: false // 后面逐步迁移到使用 init 的方式初始化模型的机制
     }, opts)
     try {
       if (Utils._.isFunction(instanceKey) || Utils._.isArray(instanceKey)) {
@@ -218,13 +218,19 @@ class DatabaseLoader {
           }
 
           let model
-          if (!opts.loadWithInit) {
+          if (!opts.extendModelClass) {
             model = sequelize.define(modelNameUpper, newTableInfo, options)
           } else {
-            if (Utils._.isString(callback) && fs.existsSync(require.resolve(`${callback}/${modelNameUpper}`))) {
-              model = (require(`${callback}/${modelNameUpper}`)).init(newTableInfo, options)
+            let modelFilePath
+            try {
+              modelFilePath = require.resolve(`${callback}/${modelNameUpper}`)
+            } catch (e) {
+              console.error(e)
+            }
+            if (Utils._.isString(callback) && modelFilePath && fs.existsSync(modelFilePath)) {
+              model = (require(modelFilePath)).init(newTableInfo, options)
             } else {
-              model = (class extends Model {}).init(newTableInfo, options)
+              model = sequelize.define(modelNameUpper, newTableInfo, options)
             }
           }
 
@@ -246,7 +252,7 @@ class DatabaseLoader {
         } catch (e) {}
       })
 
-      if (!opts.loadWithInit) {
+      if (!opts.extendModelClass) {
         // load 函数的callback参数可以是
         // 1, 一个回调函数的数组，
         // 2, 一组路径
