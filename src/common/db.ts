@@ -225,7 +225,9 @@ class DatabaseLoader {
             try {
               modelFilePath = require.resolve(`${callback}/${modelNameUpper}`)
             } catch (e) {
-              console.error(e)
+              if (e.code !== 'MODULE_NOT_FOUND') {
+                console.error(e.message)
+              }
             }
             if (Utils._.isString(callback) && modelFilePath && fs.existsSync(modelFilePath)) {
               model = (require(modelFilePath)).init(newTableInfo, options)
