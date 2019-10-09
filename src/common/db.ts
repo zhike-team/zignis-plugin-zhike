@@ -181,6 +181,7 @@ class DatabaseLoader {
           if (/^nextval\(.*?::regclass\)$/.test(tableInfo[field].defaultValue)) {
             delete tableInfo[field].defaultValue
             tableInfo[field].autoIncrement = true
+            tableInfo[field].primaryKey = true
             tableAutoIncrementFieldExisted = true
           }
 
@@ -211,10 +212,14 @@ class DatabaseLoader {
 
           if (newTableFields.indexOf('createdAt') === -1) {
             options.createdAt = false
+          } else {
+            options.createdAt = 'created_at'
           }
 
           if (newTableFields.indexOf('updatedAt') === -1) {
             options.updatedAt = false
+          } else {
+            options.updatedAt = 'updated_at'
           }
 
           let model

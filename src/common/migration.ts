@@ -114,10 +114,10 @@ const genFieldType = function(_attr: string) {
   } else if (_attr.match(/^(smallint|mediumint|tinyint|int|integer)/)) {
     let length = _attr.match(/\(\d+\)/)
     let length_0
-    if (length) {
+    if (length && length[0]) {
       length_0 = length[0]
     }
-    val = 'Sequelize.INTEGER' + (!Utils._.isNull(length_0) ? `(${length_0})` : '')
+    val = 'Sequelize.INTEGER' + (!isNaN(length_0) ? `(${length_0})` : '')
 
     let unsigned = _attr.match(/unsigned/i)
     if (unsigned) val += '.UNSIGNED'
@@ -249,7 +249,6 @@ const genAttrForOneTable = async function(
   if (options.attributes) {
     const attrsTransformed = transformAttributes(options.attributes, sequelize)
     optionAttrs.id = {
-      allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: 'Sequelize.INTEGER'
@@ -266,14 +265,14 @@ const genAttrForOneTable = async function(
     })
 
     if (!options.disableTimestamps) {
-      optionAttrs.createdAt = {
+      optionAttrs.created_at = {
         allowNull: false,
         type: 'Sequelize.DATE'
       }
     }
 
     if (!options.disableTimestamps) {
-      optionAttrs.updatedAt = {
+      optionAttrs.updated_at = {
         allowNull: false,
         type: 'Sequelize.DATE'
       }
