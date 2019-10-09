@@ -177,17 +177,17 @@ class DatabaseLoader {
           })
 
           tableInfo[field].field = field
-          // for PG, check autoIncrement rule
-          if (/^nextval\(.*?::regclass\)$/.test(tableInfo[field].defaultValue)) {
-            delete tableInfo[field].defaultValue
-            tableInfo[field].autoIncrement = true
-            tableInfo[field].allowNull = true // This seems a Sequelize bug, for primaryKey, use this to make create method work
-            tableAutoIncrementFieldExisted = true
-          }
 
           // Only one autoincrement field allowed, we should put autoIncrement at the first of the table
           if (tableAutoIncrementFieldExisted && tableInfo[field].autoIncrement) {
             delete tableInfo[field].autoIncrement
+          }
+
+          // for PG, check autoIncrement rule
+          if (/^nextval\(.*?::regclass\)$/.test(tableInfo[field].defaultValue)) {
+            delete tableInfo[field].defaultValue
+            tableInfo[field].autoIncrement = true
+            tableAutoIncrementFieldExisted = true
           }
 
           newTableInfo[newField] = tableInfo[field]
