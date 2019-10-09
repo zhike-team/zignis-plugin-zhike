@@ -266,14 +266,12 @@ const genAttrForOneTable = async function(
 
     if (!options.disableTimestamps) {
       optionAttrs.created_at = {
-        allowNull: false,
         type: 'Sequelize.DATE'
       }
     }
 
     if (!options.disableTimestamps) {
       optionAttrs.updated_at = {
-        allowNull: false,
         type: 'Sequelize.DATE'
       }
     }
