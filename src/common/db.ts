@@ -181,7 +181,7 @@ class DatabaseLoader {
           if (/^nextval\(.*?::regclass\)$/.test(tableInfo[field].defaultValue)) {
             delete tableInfo[field].defaultValue
             tableInfo[field].autoIncrement = true
-            tableInfo[field].primaryKey = true
+            tableInfo[field].allowNull = true // This seems a Sequelize bug, for primaryKey, use this to make create method work
             tableAutoIncrementFieldExisted = true
           }
 
