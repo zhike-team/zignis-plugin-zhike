@@ -213,13 +213,13 @@ class DatabaseLoader {
           if (newTableFields.indexOf('createdAt') === -1) {
             options.createdAt = false
           } else {
-            options.createdAt = 'created_at'
+            options.createdAt = newTableInfo['createdAt'].field
           }
 
           if (newTableFields.indexOf('updatedAt') === -1) {
             options.updatedAt = false
           } else {
-            options.updatedAt = 'updated_at'
+            options.updatedAt = newTableInfo['updatedAt'].field
           }
 
           let model
