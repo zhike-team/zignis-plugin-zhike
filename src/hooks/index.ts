@@ -106,22 +106,36 @@ export const hook_repl = async (): Promise<object> => {
  */
 export const hook_components = async (): Promise<object> => {
   const hookZhikeComponent = await Utils.invokeHook('zhike_component')
-  return Object.assign(
-    {
-      db: ZhikeUtils.dbForComponent,
-      database: ZhikeUtils.dbForComponent,
-      redis: ZhikeUtils.redisInstance,
-      cache: ZhikeUtils.redisInstance,
-      config: ZhikeUtils.config,
-      consul: ZhikeUtils.config,
-      api: ZhikeUtils.api,
-      mq: ZhikeUtils.mq,
-      oss: ZhikeUtils.oss,
-      es: ZhikeUtils.elasticsearch,
-      elasticsearch: ZhikeUtils.elasticsearch
-    },
-    hookZhikeComponent
-  )
+  return {
+    // 以后推荐把组件定义在 zhike 里，后面重复的组件是为了前后兼容，以后可能移除
+    zhike: Object.assign(
+      {
+        db: ZhikeUtils.dbForComponent,
+        database: ZhikeUtils.dbForComponent,
+        redis: ZhikeUtils.redisInstance,
+        cache: ZhikeUtils.redisInstance,
+        config: ZhikeUtils.config,
+        consul: ZhikeUtils.config,
+        api: ZhikeUtils.api,
+        mq: ZhikeUtils.mq,
+        oss: ZhikeUtils.oss,
+        es: ZhikeUtils.elasticsearch,
+        elasticsearch: ZhikeUtils.elasticsearch
+      },
+      hookZhikeComponent
+    ),
+    db: ZhikeUtils.dbForComponent,
+    database: ZhikeUtils.dbForComponent,
+    redis: ZhikeUtils.redisInstance,
+    cache: ZhikeUtils.redisInstance,
+    config: ZhikeUtils.config,
+    consul: ZhikeUtils.config,
+    api: ZhikeUtils.api,
+    mq: ZhikeUtils.mq,
+    oss: ZhikeUtils.oss,
+    es: ZhikeUtils.elasticsearch,
+    elasticsearch: ZhikeUtils.elasticsearch
+  }
 }
 
 export const hook_beforeCommand = async () => {
