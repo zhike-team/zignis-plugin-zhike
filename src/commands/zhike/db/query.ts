@@ -11,6 +11,7 @@ export const aliases = ['q']
 export const builder = function(yargs: any) {
   yargs.option('fields', { default: false, describe: 'pick fields from query results' })
   yargs.option('pipe', { default: false, describe: 'output result using TSV format' })
+  yargs.option('raw', { default: false, describe: 'output raw result' })
   yargs.option('header', { default: true, describe: 'show fields header or not' })
 }
 
@@ -63,7 +64,10 @@ export const handler = async function(argv: any) {
         return newRow
       })
 
-      if (argv.pipe) {
+      if (argv.raw) {
+        Utils.log(filteredResults)
+      }
+      else if (argv.pipe) {
         filteredResults.forEach(function(row: any) {
           console.log(
             fields

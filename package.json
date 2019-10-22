@@ -58,6 +58,7 @@
     "typescript": "^3.6.3"
   },
   "scripts": {
+    "watch": "tsc -w",
     "build": "tsc",
     "clean": "rimraf lib",
     "postversion": "git push && git push --tags",
