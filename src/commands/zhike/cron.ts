@@ -1,13 +1,12 @@
 import glob from 'glob'
 import cron from 'node-cron'
 import path from 'path'
-import promisify from 'util.promisify'
 import fs from 'fs'
 import cProcess from 'child_process'
 import { Utils } from 'zignis'
 
 const debug = Utils.debug('zignis-plugin-zhike:cron')
-const execFile = promisify(cProcess.execFile)
+const spawnSync = cProcess.spawnSync
 
 const DEFAULT_EXPIRE_MILLISECONDS = 60000
 
@@ -19,12 +18,21 @@ const shell = {
       if (typeof action === 'string') {
         debug(`Action: [${action}] executed!`)
         const parts = action.split(/\s+/g)
-        const { stdout } = await execFile(parts[0], parts.slice(1), {})
-        debug(stdout)
+        spawnSync(parts[0], parts.slice(1), {
+          stdio: [process.stdin, process.stdout, process.stderr]
+        })
       } else if (Utils._.isArray(action)) {
-        debug(`Action: [${action[0]} ${action[1].join(' ')}] executed!`)
-        const { stdout } = await execFile(action[0], action[1], {})
-        debug(stdout)
+        let command = action[0], args
+        if (Utils._.isArray(action[1])) {
+          args = action[1]
+        } else {
+          args = action.slice(1)
+        }
+
+        debug(`Action: [${command} ${args.join(' ')}] executed!`)
+        spawnSync(command, args, {
+          stdio: [process.stdin, process.stdout, process.stderr]
+        })
       } else if (typeof action === 'function') {
         const name = action.name ? action.name : 'function'
         debug(`Action: [${name}] executed!`)
