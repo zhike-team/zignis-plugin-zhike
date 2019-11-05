@@ -193,6 +193,11 @@ class DatabaseLoader {
           newTableInfo[newField] = tableInfo[field]
           newTableFields.push(newField)
         })
+
+        if (!tableAutoIncrementFieldExisted && newTableInfo.id) {
+          newTableInfo.id.allowNull = true
+        }
+
         const modelName =
           table.indexOf(dbConfig.prefix) > -1
             ? table.substring(dbConfig.prefix.length).replace(/(_.)/g, function(word) {
