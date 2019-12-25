@@ -28,7 +28,7 @@ export const builder = function(yargs: any) {
 export const handler = async function(argv: any) {
   const namespace = argv.namespace
   const binary = argv.binary
-  const configType = namespace.indexOf('production') > -1 ? 'production' : 'development'
+  const configType = (namespace.indexOf('production') > -1 || namespace.indexOf('test') > -1) ? 'production' : 'development'
   const configPathEnv = configType === 'development' ? 'ZIGNIS_ZHIKE_K8S_DEV' : 'ZIGNIS_ZHIKE_K8S_PROD'
   const configPathKey = configType === 'development' ? 'devConfigPath' : 'prodConfigPath'
   const kubeconfigPath = process.env[configPathEnv] ? process.env[configPathEnv] : argv[configPathKey]
