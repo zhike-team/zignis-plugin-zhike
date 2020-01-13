@@ -77,7 +77,7 @@ class DatabaseLoader {
         opts = instanceKey
         instanceKey = <string>consulKey
       } else if (Utils._.isString(instanceKey)) {
-        if (Utils._.isObject(callback)) {
+        if (Utils._.isObject(callback) && !Utils._.isFunction(callback)) {
           opts = callback
           callback = instanceKey
           instanceKey = ''
@@ -87,7 +87,7 @@ class DatabaseLoader {
         throw new Error('Undefined argument type!')
       }
 
-      if (Utils._.isObject(callback)) {
+      if (Utils._.isObject(callback) && !Utils._.isFunction(callback)) {
         opts = callback
         callback = null
       }
