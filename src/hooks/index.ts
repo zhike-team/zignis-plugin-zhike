@@ -55,6 +55,9 @@ export const hook_new_repo = {
 export const hook_repl = async (): Promise<object> => {
   const hookZhikeRepl = await Utils.invokeHook('zhike_repl')
   return {
+    // 为了方便使用而内置的变量，这里不考虑和其他插件注入冲突的可能性，因为可能性很小
+    Sequelize: ZhikeUtils.dbForRepl.Sequelize,
+    Op: ZhikeUtils.dbForRepl.Op,
     zhike: Object.assign(
       {
         db: ZhikeUtils.dbForRepl,
